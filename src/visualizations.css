@@ -19,7 +19,7 @@
 }
 .report-panel h2 {
   margin: 0 0 .55em;
-  font: 400 clamp(1.95rem, 3.2vw, 3.6rem)/1 var(--serif);
+  font: 400 clamp(1.7rem, 2.8vw, 3.3rem)/1.08 var(--serif);
 }
 .report-panel h2 span {
   margin-inline-start: .45em;
@@ -63,7 +63,7 @@
   background: var(--surface);
   border: 1px solid var(--rule);
   box-shadow: 0 7px 16px #0008;
-  font: 400 clamp(1.05rem, 2.35vw, 2.8rem)/1.05 var(--serif);
+  font: 400 clamp(1rem, 2vw, 2.45rem)/1.12 var(--serif);
   text-wrap: balance;
 }
 .map-hub { border-color: var(--accent); animation: signal-in 570ms var(--ease) both; }
@@ -110,7 +110,7 @@
 .alert-chart i { width: .85em; }
 
 .stage.layout-quiz { grid-template-columns: minmax(0, 1fr); justify-items: center; gap: clamp(16px, 2.5vh, 28px); }
-.stage.layout-quiz h1 { font-size: clamp(2.8rem, 5.5vw, 6rem); text-align: center; }
+.stage.layout-quiz h1 { font-size: clamp(2.15rem, 4.6vw, 5.3rem); text-align: center; }
 .layout-quiz .stage-visual { width: min(100%, 980px); }
 .quiz-panel {
   padding: clamp(14px, 2.5vw, 40px);
@@ -125,7 +125,7 @@
 .quiz-progress progress::-webkit-progress-bar { background: var(--bg); }
 .quiz-progress progress::-webkit-progress-value { background: var(--accent); }
 .quiz-progress progress::-moz-progress-bar { background: var(--accent); }
-.quiz-panel h2 { margin: .62em 0; font: 400 clamp(1.65rem, 3.1vw, 3.35rem)/1.04 var(--serif); text-wrap: balance; }
+.quiz-panel h2 { margin: .62em 0; font: 400 clamp(1.5rem, 2.65vw, 3rem)/1.13 var(--serif); text-wrap: balance; }
 .quiz-panel h2:focus { outline: none; }
 .quiz-options { display: grid; gap: 8px; }
 .quiz-options button, .quiz-next { padding: .65em .82em; border: 1px solid var(--rule); }

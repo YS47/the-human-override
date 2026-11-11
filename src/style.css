@@ -2,7 +2,7 @@
   view-transition-name: none;
   color-scheme: dark;
   font-family: 'Geist Variable', system-ui, sans-serif;
-  --serif: 'Instrument Serif', Georgia, serif;
+  --serif: 'DM Serif Text', Georgia, serif;
   --mono: 'IBM Plex Mono', monospace;
   --ease: cubic-bezier(.2,.75,.24,1);
   --duration: 540ms;
@@ -64,8 +64,8 @@ h1, p, figure, dl, ol { margin: 0; }
 .stage.black-stage { --bg: #000; --surface: #1F252B; --rule: #475159; --muted: #C8C9C6; }
 .stage-copy { min-width: 0; }
 .stage h1 {
-  font: 400 clamp(3.6rem, 6.1vw, 8.2rem)/.94 var(--serif);
-  letter-spacing: -.026em;
+  font: 400 clamp(3.1rem, 5.1vw, 7rem)/1.04 var(--serif);
+  letter-spacing: -.02em;
   text-wrap: balance;
 }
 .stage h1 em { color: var(--signal); font-weight: 400; }
@@ -102,12 +102,12 @@ h1, p, figure, dl, ol { margin: 0; }
   grid-template-columns: minmax(0, 1fr);
 }
 .layout-statement .stage-copy { max-width: min(100%, 1220px); }
-.layout-statement h1 { font-size: clamp(3.8rem, 7.1vw, 9.35rem); line-height: .98; }
+.layout-statement h1 { font-size: clamp(3.4rem, 6.1vw, 8.15rem); }
 .layout-statement .support { margin-inline: auto; }
 .opening .layout-statement .stage-copy { max-width: min(100%, 1110px); }
 .opening .layout-statement h1 { white-space: pre-line; }
 .opening[data-beat='1'] .stage h1 { animation: premise-in 650ms var(--ease) both; }
-.theme-humanity h1 { font-size: clamp(3.6rem, 6.6vw, 8.1rem); }
+.theme-humanity h1 { font-size: clamp(3.25rem, 5.5vw, 7.3rem); }
 
 .layout-aside, .layout-reverse, .layout-archive, .layout-screening {
   grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
@@ -117,7 +117,7 @@ h1, p, figure, dl, ol { margin: 0; }
 .layout-reverse .stage-visual { grid-column: 1; grid-row: 1; }
 .layout-reverse .stage-copy { grid-column: 2; grid-row: 1; }
 .layout-archive { grid-template-columns: minmax(0, .86fr) minmax(0, 1.14fr); }
-.layout-archive h1 { font-size: clamp(3.3rem, 5.3vw, 7rem); }
+.layout-archive h1 { font-size: clamp(2.95rem, 4.55vw, 6.1rem); }
 .layout-archive .stage-copy { padding-left: clamp(16px, 2.2vw, 38px); border-left: 2px solid var(--accent); }
 .layout-screening .stage-copy { max-width: 680px; }
 .layout-screening .stage-visual { justify-self: center; width: min(100%, 66svh, 750px); }
@@ -128,7 +128,7 @@ h1, p, figure, dl, ol { margin: 0; }
   text-align: center;
 }
 .layout-frame { gap: clamp(18px, 2.7vh, 40px); }
-.layout-frame h1, .layout-diagram h1, .layout-split h1 { font-size: clamp(3.2rem, 5.4vw, 6.8rem); }
+.layout-frame h1, .layout-diagram h1, .layout-split h1 { font-size: clamp(2.95rem, 4.65vw, 6rem); }
 .layout-frame .support, .layout-split .support, .layout-diagram .support { margin-inline: auto; }
 .layout-frame .stage-visual { width: min(100%, 1280px); }
 .layout-diagram .stage-visual, .layout-split .stage-visual { width: min(100%, 1260px); }
@@ -137,7 +137,7 @@ h1, p, figure, dl, ol { margin: 0; }
 .layout-number {
   grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr);
 }
-.layout-number h1 { font-size: clamp(3.3rem, 5.3vw, 7rem); }
+.layout-number h1 { font-size: clamp(2.95rem, 4.55vw, 6.1rem); }
 .layout-number .stage-visual { border-left: 1px solid var(--rule); padding-left: clamp(18px, 3vw, 65px); }
 
 .photograph img, .detector svg, .experiment svg { width: 100%; display: block; }
@@ -172,6 +172,7 @@ figcaption {
 figcaption a { text-decoration: none; color: var(--text); }
 figcaption a:hover { text-decoration: underline; }
 .detector { width: min(100%, 960px); margin-inline: auto; }
+.detector svg { max-height: 55svh; }
 .detector figcaption, .pair-diagram figcaption, .path-diagram figcaption, .result-figure figcaption {
   margin-top: .8rem;
 }
@@ -201,7 +202,7 @@ figcaption a:hover { text-decoration: underline; }
 }
 .document:hover { outline: 2px solid var(--accent); outline-offset: 3px; }
 .document .eyebrow { margin: 0; color: #6D5141; }
-.document-name { font: 400 clamp(2rem, 3.7vw, 4.7rem)/1 var(--serif); text-wrap: balance; }
+.document-name { font: 400 clamp(1.8rem, 3.15vw, 4.1rem)/1.1 var(--serif); text-wrap: balance; }
 .document-title { max-width: 42ch; font-size: clamp(1.1rem, 1.64vw, 2rem); line-height: 1.33; }
 .document-date { border-top: 1px solid #C8AE8C; padding-top: 1em; font: 500 clamp(.78rem, 1.03vw, 1.1rem) var(--mono); color: #6D5141; display: flex; justify-content: space-between; }
 
@@ -220,7 +221,7 @@ figcaption a:hover { text-decoration: underline; }
   border: 1px solid var(--rule);
   background: var(--surface);
   box-shadow: inset 0 1px var(--rule), 0 15px 26px -6px #000c;
-  font: 400 clamp(1.65rem, 3.6vw, 4.65rem)/1 var(--serif);
+  font: 400 clamp(1.4rem, 3vw, 4rem)/1.12 var(--serif);
   text-wrap: balance;
 }
 .pair-columns span:nth-child(2) { border-color: var(--accent); }
@@ -241,7 +242,7 @@ figcaption a:hover { text-decoration: underline; }
 
 .stat strong {
   display: block;
-  font: 400 clamp(4rem, 12vw, 14.5rem)/.9 var(--serif);
+  font: 400 clamp(3.4rem, 9.15vw, 12rem)/1 var(--serif);
   color: var(--signal);
   text-shadow: 0 .045em var(--secondary), 0 .085em .15em #000c;
   white-space: nowrap;
@@ -375,7 +376,7 @@ figcaption a:hover { text-decoration: underline; }
 .interview iframe { display: block; width: min(100%, 760px); aspect-ratio: 16 / 9; border: 1px solid var(--controls-rule); margin-block: .5rem; }
 .interview p { margin-bottom: .5em; }
 .stage .interview { padding: clamp(18px, 2.4vw, 48px); border: 1px solid var(--rule); background: var(--surface); }
-.stage .interview h3 { font: 400 clamp(1.55rem, 3vw, 3.5rem)/1.05 var(--serif); margin: 0 0 .5em; }
+.stage .interview h3 { font: 400 clamp(1.45rem, 2.7vw, 3.2rem)/1.1 var(--serif); margin: 0 0 .5em; }
 .stage .interview button { color: var(--text); background: var(--bg); border: 1px solid var(--rule); }
 .stage .interview iframe { max-height: 47svh; }
 
@@ -434,12 +435,13 @@ figcaption a:hover { text-decoration: underline; }
 
 @media (max-width: 880px) {
   .stage { gap: 24px; padding-inline: clamp(58px, 8vw, 72px); }
-  .stage h1 { font-size: clamp(2.8rem, 7vw, 5.2rem); }
-  .stage.layout-statement h1 { font-size: clamp(3.2rem, 8.3vw, 6rem); }
+  .stage h1 { font-size: clamp(2.35rem, 6.6vw, 4.7rem); }
+  .stage.layout-statement h1 { font-size: clamp(2.45rem, 7.4vw, 4.9rem); }
 }
 
 @media (max-width: 670px) {
   .stage { grid-template-columns: minmax(0, 1fr); padding: 64px clamp(18px, 6vw, 36px) 89px; gap: 24px; }
+  .opening[data-beat='1'] .stage h1 { font-size: clamp(1.85rem, 8.4vw, 3.35rem); }
   .layout-reverse .stage-copy, .layout-reverse .stage-visual { grid-column: auto; grid-row: auto; }
   .layout-archive .stage-copy { padding-left: 12px; }
   .layout-number .stage-visual { border-left: 0; border-top: 1px solid var(--rule); padding: 16px 0 0; }
