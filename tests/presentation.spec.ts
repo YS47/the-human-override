@@ -54,9 +54,9 @@ test('navigator jumps to any scene and the chapter rail returns to earlier chapt
   await expect(stage(page)).toBeFocused()
   await page.keyboard.press('g')
   const dialog = page.getByRole('dialog', { name: 'Scene navigator' })
-  await expect(dialog.getByRole('button')).toHaveCount(43)
-  await dialog.getByRole('button', { name: /22 The Lavender investigation/ }).click()
-  await at(page, 22, 1)
+  await expect(dialog.getByRole('button')).toHaveCount(49)
+  await dialog.getByRole('button', { name: /23 The Lavender investigation/ }).click()
+  await at(page, 23, 1)
   await page.getByRole('navigation', { name: 'Chapters' }).getByRole('button', { name: 'Two armies, one battlefield' }).click()
   await at(page, 1, 1)
   await expect(dialog).toHaveCount(0)
@@ -64,15 +64,15 @@ test('navigator jumps to any scene and the chapter rail returns to earlier chapt
 
 test('deep links restore individual beats and legacy aliases', async ({ page }) => {
   await page.goto('./#scene-30.2')
-  await at(page, 30, 2)
+  await at(page, 32, 2)
   await expect(stage(page).getByRole('heading')).toHaveText('Blurred input')
   await page.reload()
-  await at(page, 30, 2)
+  await at(page, 32, 2)
   await page.goto('./#scene-1.1-find')
   await at(page, 3, 1)
   await expect(stage(page).getByRole('heading')).toHaveText('Find')
   await page.goto('./#scene-reflection')
-  await at(page, 42, 1)
+  await at(page, 48, 1)
   await expect(page.getByRole('button', { name: 'Next beat' })).toBeDisabled()
 })
 
@@ -146,12 +146,12 @@ test('audio cues play only when unmuted', async ({ page }) => {
   await page.keyboard.press('m')
   await expect(page.getByRole('button', { name: 'Mute audio' })).toBeVisible()
   await next(page)
-  await at(page, 17, 1)
+  await at(page, 18, 1)
   await expect.poll(cues).toBe(1)
   await page.keyboard.press('m')
   await page.keyboard.press('ArrowLeft')
   await next(page)
-  await at(page, 17, 1)
+  await at(page, 18, 1)
   expect(await cues()).toBe(1)
 })
 
@@ -164,14 +164,48 @@ test('a missing photo and an unavailable video preserve evidence links and navig
   await next(page)
   await at(page, 10, 2)
   await page.goto('./#scene-22.1')
-  await at(page, 22, 1)
+  await at(page, 23, 1)
   await page.keyboard.press('i')
   const dialog = page.getByRole('dialog')
   await dialog.getByRole('button', { name: 'Load interview player' }).click()
   await expect(dialog.getByRole('link', { name: /Open the original interview/ })).toHaveAttribute('href', /democracynow\.org/)
   await dialog.getByRole('button', { name: 'Close panel' }).click()
   await next(page)
-  await at(page, 22, 2)
+  await at(page, 23, 2)
+})
+
+test('both supplied excerpts play on demand and blackout pauses without moving the deck', async ({ page }) => {
+  const excerpts = [
+    ['bench-test', 31, 'robocurve-bench', 4],
+    ['camera-comparison', 33, 'robocurve-comparison', 5],
+  ] as const
+  for (const [link, scene, file, duration] of excerpts) {
+    await page.goto('./#scene-' + link + '.1')
+    await at(page, scene, 1)
+    const video = stage(page).locator('video')
+    await expect(video).toHaveAttribute('src', '/the-human-override/media/' + file + '.mp4')
+    await expect.poll(() => video.evaluate(player => player.duration)).toBeCloseTo(duration)
+    expect(await video.evaluate(player => player.paused)).toBe(true)
+    await video.evaluate(player => player.play())
+    await expect.poll(() => video.evaluate(player => player.currentTime)).toBeGreaterThan(0)
+    await page.keyboard.press('b')
+    await expect(page.getByRole('button', { name: 'Restore presentation' })).toBeVisible()
+    await expect.poll(() => video.evaluate(player => player.paused)).toBe(true)
+    await page.keyboard.press('b')
+    await at(page, scene, 1)
+  }
+  await next(page)
+  await at(page, 34, 1)
+  await expect(stage(page).locator('video')).toHaveCount(0)
+})
+
+test('a missing reel shows the credited frame and the presenter can advance', async ({ page }) => {
+  await page.route('**/media/robocurve-bench.mp4', route => route.abort())
+  await page.goto('./#scene-bench-test.1')
+  await expect(stage(page).getByRole('status')).toContainText('Showing the opening frame')
+  await expect(stage(page).getByRole('img')).toBeVisible()
+  await next(page)
+  await at(page, 32, 1)
 })
 
 test('the complete sequence fits a 16:9 projector and the phase colors are solid', async ({ page }) => {
@@ -191,10 +225,11 @@ test('the complete sequence fits a 16:9 projector and the phase colors are solid
 
 test('assets resolve under the Pages base path on a narrow viewport', async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 800 })
-  for (const hash of ['01.2', '10.1', '20.3', '22.1', '29.1', '42.1']) {
-    await page.goto('./#scene-' + hash)
-    const [scene, beat] = hash.split('.').map(Number)
-    await at(page, scene, beat)
+  for (const link of ['01.2', '10.1', 'what-the-display-leaves-out.1', '20.3', '22.1', '29.1', 'camera-comparison.1', '42.1']) {
+    const hash = '#scene-' + link
+    await page.goto('./' + hash)
+    const moment = timeline.find(entry => entry.hash === hash)!
+    await at(page, moment.sceneIndex + 1, moment.beatIndex + 1)
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(360)
     await expect(page.getByRole('button', { name: 'Evidence inspector', exact: true })).toBeVisible()
     const photo = stage(page).locator('img')

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type PointerEvent } from 'react'
 import { evidence } from './evidence'
-import { interview, mediaDetails, mediaImage, type MediaId } from './media'
+import { clips, interview, mediaDetails, mediaImage, type MediaId } from './media'
 import { chapters, discussion, phaseTitles, scenes, timeline, type Moment } from './scenes'
 
 export type Panel = 'navigator' | 'notes' | 'evidence' | 'help'
@@ -58,7 +58,8 @@ function Notes({ moment }: { moment: Moment }) {
 function sceneMedia(moment: Moment): MediaId[] {
   const selected = moment.beat.visual
   const ids = moment.scene.beats.flatMap(({ visual }) =>
-    visual?.kind === 'image' ? [visual.id] : visual?.kind === 'conditions' ? ['robot-3' as const] : [])
+    visual?.kind === 'image' ? [visual.id] :
+      visual?.kind === 'conditions' ? ['robot-3' as const] : visual?.kind === 'clip' ? [clips[visual.id].poster] : [])
   const current = selected?.kind === 'image' ? [selected.id] : []
   return [...new Set([...current, ...ids, ...(moment.scene.extras ?? [])])]
 }

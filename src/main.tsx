@@ -7,12 +7,12 @@ import '@fontsource/instrument-serif/latin-400-italic.css'
 import '@fontsource/ibm-plex-mono/latin-500.css'
 import { ChapterRail, PresenterPanel, sceneNumber, totalScenes, type Panel } from './Presenter'
 import { Stage } from './Stage'
-import { mediaImage } from './media'
+import { clips, mediaImage } from './media'
 import { momentIndex, timeline, type Beat, type Transition } from './scenes'
 import './style.css'
 
 const animationTime: Record<Transition, number> = {
-  cut: 0, dip: 820, zoom: 720, across: 560, wipe: 570, match: 520, isolate: 630, replace: 450, split: 620, reset: 1000,
+  cut: 0, dip: 820, zoom: 720, across: 560, wipe: 570, match: 520, isolate: 630, replace: 450, split: 620, reset: 1000, aperture: 680,
 }
 const inputInterval = 230
 const lastBeat = timeline.length - 1
@@ -193,7 +193,7 @@ function App() {
       if (key === 'f') { event.preventDefault(); void toggleFullscreen(); return }
       if (key === 'c') { event.preventDefault(); setShowControls(value => !value); return }
       if (panel) return
-      if (key === ' ' && event.target instanceof HTMLElement && event.target.closest('button,a')) return
+      if (key === ' ' && event.target instanceof HTMLElement && event.target.closest('button,a,video')) return
       if ([' ', 'arrowright', 'arrowleft'].includes(key)) {
         event.preventDefault()
         step(key === 'arrowleft' ? -1 : 1)
@@ -219,9 +219,12 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'instant' })
     const upcoming = timeline.slice(position + 1, position + 4)
     for (const { beat } of upcoming) {
-      if (beat.visual?.kind === 'image' || beat.visual?.kind === 'conditions') {
+      const visual = beat.visual
+      const image = visual?.kind === 'image' ? visual.id :
+        visual?.kind === 'conditions' ? 'robot-3' : visual?.kind === 'clip' ? clips[visual.id].poster : null
+      if (image) {
         const photo = new Image()
-        photo.src = mediaImage(beat.visual.kind === 'image' ? beat.visual.id : 'robot-3')
+        photo.src = mediaImage(image)
       }
     }
   }, [position, moment])
@@ -230,7 +233,7 @@ function App() {
     <div className={'presentation theme-' + moment.chapter.phase + (moment.beat.black ? ' opening' : '')}
       data-scene={moment.sceneIndex + 1} data-beat={moment.beatIndex + 1}>
       <div className="presentation-content" inert={blackout}>
-        <Stage moment={moment} advance={() => step(1)} muted={muted || blackout} />
+        <Stage moment={moment} advance={() => step(1)} muted={muted || blackout} covered={blackout || panel !== null} />
         {showControls && <>
           <ChapterRail moment={moment} visited={visited} jump={navigate} />
           <nav className="control-bar" aria-label="Presenter controls">

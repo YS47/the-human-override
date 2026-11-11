@@ -1,5 +1,5 @@
 import type { EvidenceId } from './evidence'
-import type { MediaId } from './media'
+import type { ClipId, MediaId } from './media'
 
 export const phaseTitles = {
   control: 'Rewriting the Rules of War',
@@ -21,8 +21,8 @@ export const chapters = [
   { id: '4', title: 'Reflection', phase: 'humanity' },
 ] as const
 
-export type Transition = 'cut' | 'dip' | 'zoom' | 'across' | 'wipe' | 'match' | 'isolate' | 'replace' | 'split' | 'reset'
-export type Composition = 'statement' | 'aside' | 'reverse' | 'frame' | 'diagram' | 'archive' | 'number' | 'split'
+export type Transition = 'cut' | 'dip' | 'zoom' | 'across' | 'wipe' | 'match' | 'isolate' | 'replace' | 'split' | 'reset' | 'aperture'
+export type Composition = 'statement' | 'aside' | 'reverse' | 'frame' | 'diagram' | 'archive' | 'number' | 'split' | 'screening'
 export type Visual =
   | { kind: 'image'; id: MediaId; detail?: boolean }
   | { kind: 'source'; id: EvidenceId }
@@ -35,6 +35,7 @@ export type Visual =
   | { kind: 'bases' }
   | { kind: 'fusion'; merged: boolean }
   | { kind: 'interview' }
+  | { kind: 'clip'; id: ClipId }
 
 export type Beat = {
   title: string
@@ -58,6 +59,7 @@ export type Scene = {
   next: string
   beats: Beat[]
   alias?: string
+  slug?: string
   extras?: MediaId[]
   interview?: boolean
 }
@@ -179,11 +181,17 @@ const control: Scene[] = [
   {
     chapter: '1.2', title: 'Applications', purpose: 'Return to the two teams with a concrete advantage.', seconds: 43, sources: ['army'],
     notes: 'Applications let people view, share and work with data. Return to the Base A vote. A shared display can reduce handoffs. Reports still need checking.',
-    next: 'A field test shows what happens under stress.',
+    next: 'What can disappear when a report becomes a point on a shared display?',
     beats: [
       beat('The application is what people use.', 'aside', 'wipe', { visual: image('oversight'), label: 'NGC2 demonstration' }),
       beat('Base A can get the same update to more people.', 'statement', 'replace', { text: 'The quality of the underlying report still matters.' }),
     ],
+  },
+  {
+    chapter: '1.2', slug: 'what-the-display-leaves-out', title: 'What the display leaves out', purpose: 'Separate the underlying report from its presentation.', seconds: 22, sources: ['army', 'fusion'],
+    notes: 'This is a frame from Johnny Harris’s documentary, not an Army interface. Ask the room what a tidy map cannot show on its own. Take one answer about missing context or the age of a report.',
+    next: 'A field test shows what happens when updates become harder to deliver.',
+    beats: [beat('What does the display leave out?', 'reverse', 'zoom', { visual: image('war-interview'), label: 'Documentary still', text: 'A shared view still depends on the reports behind it.' })],
   },
   {
     chapter: '1.3', title: 'Heat in the field', purpose: 'Interrupt the architecture story with a reported limitation.', seconds: 55, sources: ['field', 'atec'], alias: '1.3',
@@ -311,18 +319,30 @@ const dread: Scene[] = [
   {
     chapter: '3.1', title: 'What did the robot see?', purpose: 'Frame the Robocurve study as a test of visual inputs.', seconds: 50, sources: ['robot'], alias: '3.1', extras: ['robot-2'],
     notes: 'Introduce a lab task with test props and a vision-language model. The first figure sets up the experiment. The inspector includes the supplied screenshot of the test tasks.',
-    next: 'Compare the visual conditions before showing outcomes.',
+    next: 'Show the bench from the observer’s point of view.',
     beats: [beat('What did the robot see?', 'reverse', 'cut', { visual: image('robot-1'), label: 'Controlled laboratory study' })],
+  },
+  {
+    chapter: '3.1', slug: 'bench-test', title: 'At the bench', purpose: 'Establish what was physically present in the lab.', seconds: 22, sources: ['robot'],
+    notes: 'Play the short overhead excerpt. Identify the doll and other objects as lab props. Ask what would change if the robot received a different view of the same bench.',
+    next: 'Compare the three views one at a time.',
+    beats: [beat('What was on the bench?', 'screening', 'aperture', { visual: { kind: 'clip', id: 'bench' }, label: 'Controlled laboratory footage', text: 'Start with the observer’s view of the test props.' })],
   },
   {
     chapter: '3.1', title: 'Three views of the same task', purpose: 'Step through the three input conditions.', seconds: 84, sources: ['robot'],
     notes: 'Compare the columns of the supplied experimental figure. Ask whether hiding visual context and changing it should have the same effect. These are experimental inputs for a controlled test with props.',
-    next: 'Reveal the observed outcomes one condition at a time.',
+    next: 'Compare the physical bench and the altered input in motion.',
     beats: [
       beat('Unaltered input', 'frame', 'cut', { visual: { kind: 'conditions', column: 0 }, text: 'Start with the original camera view.' }),
       beat('Blurred input', 'frame', 'match', { visual: { kind: 'conditions', column: 1 }, text: 'Some details are obscured.' }),
       beat('Doctored input', 'frame', 'match', { visual: { kind: 'conditions', column: 2 }, text: 'The image presents a changed scene.' }),
     ],
+  },
+  {
+    chapter: '3.1', slug: 'camera-comparison', title: 'One bench, two views', purpose: 'Make the difference between the camera input and the physical scene visible.', seconds: 23, sources: ['robot'],
+    notes: 'Use the split view in the supplied reel. The prop stayed on the bench. The model received an image of something else. Use the next scene for the study-wide counts.',
+    next: 'Reveal the observed outcomes one condition at a time.',
+    beats: [beat('One bench. Two views.', 'screening', 'aperture', { visual: { kind: 'clip', id: 'comparison' }, label: 'Controlled laboratory footage', text: 'Watch the model’s view alongside the physical bench.' })],
   },
   {
     chapter: '3.1', title: 'What changed in the trials?', purpose: 'Reveal measured outcomes one condition at a time.', seconds: 106, sources: ['robot'], extras: ['robot-4', 'robot-5'],
@@ -356,8 +376,14 @@ const dread: Scene[] = [
   {
     chapter: '3.2', title: 'The simulated emergency', purpose: 'Set the boundary between a simulated choice and actual harm.', seconds: 35, sources: ['anthropic'],
     notes: 'Some models interfered with an emergency in a fictional setting. This tests choices under the scenario’s constraints. No actual person was harmed.',
-    next: 'What changes when a model has access to tools?',
+    next: 'Look at how the researchers described the setup.',
     beats: [beat('The emergency was simulated.', 'archive', 'cut', { visual: source('anthropic'), text: 'No one was harmed in the experiment.' })],
+  },
+  {
+    chapter: '3.2', slug: 'reading-the-simulation', title: 'Reading the simulation', purpose: 'Show how a study’s setup limits the claim it supports.', seconds: 22, sources: ['anthropic'],
+    notes: 'The supplied video frame reproduces part of the Anthropic article. The authors describe a deliberately contrived scenario. Ask what evidence would be needed to make a claim about deployment.',
+    next: 'What changes when a model has access to tools?',
+    beats: [beat('The setup defines what the result can tell us.', 'reverse', 'zoom', { visual: image('simulation-context'), label: 'Study excerpt shown in commentary' })],
   },
   {
     chapter: '3.2', title: 'From model to agent', purpose: 'Show how tool access changes what a model can do.', seconds: 55, sources: ['transformer', 'anthropic'],
@@ -389,11 +415,23 @@ const dread: Scene[] = [
   {
     chapter: '3.3', title: 'Sable', purpose: 'Use fiction to ask about goals and power.', seconds: 60, sources: ['sable'], alias: '3.3', extras: ['authors'],
     notes: 'Sable is fictional. The authors use it to explore incentives for an advanced system to seek access, resources or independence in pursuit of a goal. The supplied cover appears on stage and the author portrait is in evidence.',
-    next: 'Compare two published speculative futures.',
+    next: 'Ask what the story assumes about access.',
     beats: [
       beat('Sable', 'statement', 'cut', { label: 'Fiction' }),
       beat('What if access helps with almost any goal?', 'reverse', 'replace', { visual: image('book-cover'), label: 'Fictional scenario' }),
     ],
+  },
+  {
+    chapter: '3.3', slug: 'sable-assumption', title: 'The premise behind Sable', purpose: 'Ask the audience to identify a premise of the fictional scenario.', seconds: 20, sources: ['sable'],
+    notes: 'The frame shows Drew Spartz discussing a fictional story. Ask which assumption about access or authority would change that story most.',
+    next: 'Another scenario lets us compare what changes when people make different decisions.',
+    beats: [beat('What assumption would change Sable’s story?', 'aside', 'wipe', { visual: image('sable-commentary'), label: 'Commentary on fiction' })],
+  },
+  {
+    chapter: '3.3', slug: 'two-endings', title: 'One premise, two endings', purpose: 'Frame the two AI 2027 branches before revealing them.', seconds: 20, sources: ['race', 'slowdown'],
+    notes: 'The tabletop is a staged visual from AI In Context. AI 2027 presents two branches. Ask the room to listen for the decisions that separate them.',
+    next: 'Reveal Race first, then Slowdown.',
+    beats: [beat('One premise. Two endings.', 'frame', 'match', { visual: image('scenario-tabletop'), label: 'Speculative scenario' })],
   },
   {
     chapter: '3.3', title: 'AI 2027', purpose: 'Compare two speculative endings on separate beats.', seconds: 60, sources: ['race', 'slowdown'],
@@ -442,11 +480,16 @@ export const discussion = [
   'How does reward hacking differ from accomplishing the intended task?',
   'If humans remain legally responsible, what technical controls would make oversight meaningful?',
 ]
-export const timeline = scenes.flatMap((scene, sceneIndex) => scene.beats.map((beat, beatIndex) => ({
-  scene, beat, sceneIndex, beatIndex,
-  chapter: chapters.find(chapter => chapter.id === scene.chapter)!,
-  hash: '#scene-' + String(sceneIndex + 1).padStart(2, '0') + '.' + (beatIndex + 1),
-})))
+// New scenes use named links so the original numbered URLs keep their destinations.
+let originalSceneNumber = 0
+export const timeline = scenes.flatMap((scene, sceneIndex) => {
+  const link = scene.slug ?? String(++originalSceneNumber).padStart(2, '0')
+  return scene.beats.map((beat, beatIndex) => ({
+    scene, beat, sceneIndex, beatIndex,
+    chapter: chapters.find(chapter => chapter.id === scene.chapter)!,
+    hash: '#scene-' + link + '.' + (beatIndex + 1),
+  }))
+})
 
 export type Moment = typeof timeline[number]
 

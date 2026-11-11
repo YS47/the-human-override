@@ -1,6 +1,6 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { evidence } from './evidence'
-import { mediaDetails, mediaImage, type MediaId } from './media'
+import { clips, mediaDetails, mediaImage, mediaPath, type ClipId, type MediaId } from './media'
 import { Interview } from './Presenter'
 import type { Moment, Visual } from './scenes'
 
@@ -14,9 +14,35 @@ export function Photograph({ id, detail = false }: { id: MediaId; detail?: boole
         : <div className={detail ? 'photo-crop detail' : 'photo-crop'}>
           <img src={mediaImage(id)} alt={entry.alt} onError={() => setFailed(true)} />
         </div>}
-      <figcaption><a href={entry.source} target="_blank" rel="noreferrer">{entry.title} ↗</a><span>{entry.credit} · {entry.date}</span></figcaption>
+      <figcaption><a href={entry.source} target="_blank" rel="noreferrer">{entry.title} ↗</a><span>{[entry.credit, entry.date].filter(Boolean).join(' · ')}</span></figcaption>
     </figure>
   )
+}
+
+function LabClip({ id, muted, covered }: { id: ClipId; muted: boolean; covered: boolean }) {
+  const player = useRef<HTMLVideoElement>(null)
+  const [failed, setFailed] = useState(false)
+  const clip = clips[id]
+  const poster = mediaImage(clip.poster)
+  const credit = mediaDetails(clip.poster)
+
+  useEffect(() => {
+    if (covered) player.current?.pause()
+  }, [covered])
+
+  return <figure className="lab-clip">
+    <div className="clip-frame">
+      {failed ? <img src={poster} alt={credit.alt} width={clip.width} height={clip.height} /> :
+        <video ref={player} controls playsInline muted={muted} preload="metadata"
+          src={mediaPath(clip.file)} poster={poster} width={clip.width} height={clip.height} aria-label={clip.title}
+          onError={() => setFailed(true)} />}
+    </div>
+    <figcaption>
+      {failed && <span role="status">Clip unavailable. Showing the opening frame.</span>}
+      <a href={credit.source} target="_blank" rel="noreferrer">{credit.credit} ↗</a>
+      <span>{clip.duration} · silent</span>
+    </figcaption>
+  </figure>
 }
 
 function Detector({ level }: { level: number }) {
@@ -93,7 +119,7 @@ function Fusion({ merged }: { merged: boolean }) {
   </figure>
 }
 
-function VisualContent({ visual, muted }: { visual: Visual; muted: boolean }) {
+function VisualContent({ visual, muted, covered }: { visual: Visual; muted: boolean; covered: boolean }) {
   switch (visual.kind) {
     case 'image':
       return <Photograph id={visual.id} detail={visual.detail} />
@@ -137,6 +163,8 @@ function VisualContent({ visual, muted }: { visual: Visual; muted: boolean }) {
       return <Fusion merged={visual.merged} />
     case 'interview':
       return <Interview key={String(muted)} />
+    case 'clip':
+      return <LabClip id={visual.id} muted={muted} covered={covered} />
     case 'stat':
       return <figure className="stat"><strong>{visual.value}</strong><figcaption>{visual.label}</figcaption></figure>
     case 'results':
@@ -152,7 +180,7 @@ function VisualContent({ visual, muted }: { visual: Visual; muted: boolean }) {
   }
 }
 
-export function Stage({ moment, advance, muted }: { moment: Moment; advance: () => void; muted: boolean }) {
+export function Stage({ moment, advance, muted, covered }: { moment: Moment; advance: () => void; muted: boolean; covered: boolean }) {
   const { beat, chapter } = moment
   const reflectionComma = chapter.phase === 'humanity' ? beat.title.indexOf(',') + 1 : 0
   return (
@@ -170,8 +198,8 @@ export function Stage({ moment, advance, muted }: { moment: Moment; advance: () 
         {beat.text && <p className="support">{beat.text}</p>}
       </div>
       {beat.visual && <div className="stage-visual" data-visual={beat.visual.kind}>
-        <Fragment key={beat.visual.kind === 'image' ? beat.visual.id : beat.visual.kind}>
-          <VisualContent visual={beat.visual} muted={muted} />
+        <Fragment key={beat.visual.kind === 'image' || beat.visual.kind === 'clip' ? beat.visual.id : beat.visual.kind}>
+          <VisualContent visual={beat.visual} muted={muted} covered={covered} />
         </Fragment>
       </div>}
     </main>

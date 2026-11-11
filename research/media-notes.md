@@ -1,6 +1,6 @@
 # Media and source notes
 
-The preparation archive supplies five Robocurve screenshots and a list of candidate photographs. The original Lavender passage is preserved in [lavender-original.txt](lavender-original.txt). The separate presenter rundown supplies the timings, spoken cues and transitions.
+The preparation archive supplies five Robocurve screenshots and a list of candidate photographs. The original Lavender passage is preserved in [lavender-original.txt](lavender-original.txt). The separate presenter rundown supplies the timings, spoken cues and transitions. Numbered entries below refer to the original URL IDs, which remain stable as the deck expands.
 
 ## Published photographs
 
@@ -35,8 +35,21 @@ See [the application manifest](../src/media.ts) for source URLs, original credit
 ## Conflicts and unavailable files
 
 - The V5.2 archive omitted the two Johnny Harris stills. Both were supplied as separate screenshots in the November 11 follow-up. The still’s five-stage graphic and the six-stage model are credited separately.
-- The outline references three reel files absent from the V5.2 archive: `1794403854952_evolving.ai_reel_20261107151421.mp4`, `1794403915179_blairimani_reel_20260921021336.mp4`, and `1794404213901_allie_202_reel_20261110230051.mp4`. The relevant scenes link the original Robocurve study, incident reports and Times investigation.
+- The user supplied two versions of the Evolving AI reel after the V5.2 archive. The Blair Imani and Allie reel files listed in the outline are still absent.
 - The archive’s proposed NGC2 photo URL did not match the cited Army article’s published image links. The site uses Sgt. William Rogers’s identified NGC2 field-training photo from the Army’s April 2026 article.
 - The media-kit group portrait could not be retrieved. The site uses the media kit’s CC0 portrait of co-author Eliezer Yudkowsky via Wikimedia Commons.
 - Robocurve reports 263/300 for the blurred condition. The chart rounds it to 88%. The 900 trials measure attempted unsafe tasks under laboratory conditions.
 - The rundown calls for audience Q&A if time permits. The last scene leaves the closing question on stage and includes the ten discussion prompts in speaker notes.
+
+## Supplied reel excerpts and frames
+
+| Scene link ID | Asset selection | Attribution |
+| --- | --- | --- |
+| `what-the-display-leaves-out` | Frame 259 | Johnny Harris, *This Is How AI Is Rewriting the Rules of War* |
+| `bench-test` | First four seconds of `1794403854952_evolving.ai_reel_20261107151421.mov` | Robocurve footage, Evolving AI edit |
+| `camera-comparison` | First five seconds of `1794403872693_evolving.ai_reel_20261107151421.mp4` | Robocurve figures and footage, Evolving AI edit |
+| `reading-the-simulation` | One sentence cropped from frame 215 | Anthropic study reproduced by Species \\| Documenting AGI |
+| `sable-assumption` | Frame 3144 | Species \\| Documenting AGI commentary on the fictional Sable story |
+| `two-endings` | Frame 792 | AI In Context, *We’re Not Ready for Superintelligence* |
+
+The clips are silent H.264 MP4s cropped to the laboratory camera views, with stills from the supplied footage. Captions link to the credited publisher, and the inspector links to the relevant primary research. The source frame directories and archives stay outside the deployment.

@@ -44,6 +44,7 @@ h1, p, figure, dl, ol { margin: 0; }
   --controls: #141719;
   --controls-text: #F3F3EF;
   --controls-rule: #535759;
+  --evidence-shadow: 0 18px 38px #0007, 0 3px 10px #0005;
 }
 
 .presentation.opening { background: #000; }
@@ -97,7 +98,7 @@ h1, p, figure, dl, ol { margin: 0; }
 .opening .layout-statement h1 { white-space: pre-line; }
 .theme-humanity h1 { font-size: clamp(3.6rem, 6.6vw, 8.1rem); }
 
-.layout-aside, .layout-reverse, .layout-archive {
+.layout-aside, .layout-reverse, .layout-archive, .layout-screening {
   grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
 }
 .layout-aside .stage-copy, .layout-reverse .stage-copy { max-width: 720px; }
@@ -107,6 +108,8 @@ h1, p, figure, dl, ol { margin: 0; }
 .layout-archive { grid-template-columns: minmax(0, .86fr) minmax(0, 1.14fr); }
 .layout-archive h1 { font-size: clamp(3.3rem, 5.3vw, 7rem); }
 .layout-archive .stage-copy { padding-left: clamp(16px, 2.2vw, 38px); border-left: 2px solid var(--accent); }
+.layout-screening .stage-copy { max-width: 680px; }
+.layout-screening .stage-visual { justify-self: center; width: min(100%, 66svh, 750px); }
 
 .layout-frame, .layout-diagram, .layout-split {
   grid-template-columns: minmax(0, 1fr);
@@ -127,6 +130,7 @@ h1, p, figure, dl, ol { margin: 0; }
 .layout-number .stage-visual { border-left: 1px solid var(--rule); padding-left: clamp(18px, 3vw, 65px); }
 
 .photograph img, .detector svg, .experiment svg { width: 100%; display: block; }
+.photograph, .experiment, .lab-clip { box-shadow: var(--evidence-shadow); outline: 1px solid var(--rule); }
 .photo-crop { overflow: hidden; background: var(--surface); }
 .photo-crop img {
   max-height: 60svh;
@@ -135,7 +139,7 @@ h1, p, figure, dl, ol { margin: 0; }
 }
 .layout-frame .photo-crop img, .layout-frame .experiment svg { max-height: 57svh; }
 .photo-crop.detail img { transform: scale(1.17); }
-.photograph figcaption, .experiment figcaption, .inspect-figure figcaption {
+.photograph figcaption, .experiment figcaption, .inspect-figure figcaption, .lab-clip figcaption {
   border-top: 1px solid var(--rule);
   background: var(--surface);
   padding: .7em 1em;
@@ -158,6 +162,15 @@ figcaption a:hover { text-decoration: underline; }
   margin-top: .8rem;
 }
 .experiment { width: min(100%, 85svh); margin-inline: auto; background: var(--surface); }
+.lab-clip { background: var(--surface); }
+.clip-frame {
+  position: relative;
+  border-inline: clamp(5px, 1vw, 16px) solid var(--surface);
+  border-block-start: 2px solid var(--accent);
+  background: #000;
+}
+.clip-frame :is(video, img) { display: block; width: 100%; height: auto; object-fit: contain; }
+.lab-clip [role="status"] { flex-basis: 100%; }
 .media-error { display: grid; min-height: 180px; align-content: center; padding: 1.5rem; color: var(--text); }
 
 .document {
@@ -167,6 +180,7 @@ figcaption a:hover { text-decoration: underline; }
   min-height: clamp(270px, 47vh, 530px);
   padding: clamp(25px, 4vw, 85px);
   border: 1px solid #C8AE8C;
+  box-shadow: 5px 5px 0 var(--secondary), var(--evidence-shadow);
   background: #F7F1E8;
   color: #342B25;
   text-decoration: none;
@@ -227,6 +241,7 @@ figcaption a:hover { text-decoration: underline; }
   left: 50%;
   transform: translateX(-50%);
   background: var(--controls);
+  box-shadow: 0 6px 18px #0008;
   border: 1px solid var(--controls-rule);
   border-radius: 6px;
   padding: 4px;
@@ -348,13 +363,14 @@ figcaption a:hover { text-decoration: underline; }
 :root[data-transition='isolate']::view-transition-new(deck) { animation-name: isolate-in; }
 :root[data-transition='replace']::view-transition-new(deck) { animation-name: text-in; }
 :root[data-transition='split']::view-transition-new(evidence-frame) { animation-name: split-in; }
+:root[data-transition='aperture']::view-transition-new(evidence-frame) { animation-name: aperture-in; }
 :root[data-transition='reset']::view-transition-old(deck) { animation-name: dip-out; }
 :root[data-transition='reset']::view-transition-new(deck) { animation-name: dip-in; }
 @keyframes out { to { opacity: 0; } }
 @keyframes in { from { opacity: 0; } }
 @keyframes dip-out { 47%, to { opacity: 0; } }
 @keyframes dip-in { from, 43% { opacity: 0; } }
-@keyframes zoom-in { from { opacity: .3; transform: scale(.91); } }
+@keyframes zoom-in { from { opacity: .35; transform: scale(.93) translateY(12px); } }
 @keyframes across-in { from { opacity: .4; clip-path: inset(0 100% 0 0); } to { clip-path: inset(0); } }
 @keyframes across-back { from { opacity: .4; clip-path: inset(0 0 0 100%); } to { clip-path: inset(0); } }
 @keyframes wipe-in { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0); } }
@@ -362,6 +378,10 @@ figcaption a:hover { text-decoration: underline; }
 @keyframes isolate-in { from { opacity: .05; transform: scale(.987); } }
 @keyframes text-in { from { opacity: 0; transform: translateY(10px); } }
 @keyframes split-in { from { clip-path: inset(0 50%); } to { clip-path: inset(0); } }
+@keyframes aperture-in {
+  from { opacity: .5; clip-path: inset(48% 0); transform: scale(.97); }
+  to { opacity: 1; clip-path: inset(0); transform: scale(1); }
+}
 
 @media (max-width: 880px) {
   .stage { gap: 24px; padding-inline: clamp(58px, 8vw, 72px); }

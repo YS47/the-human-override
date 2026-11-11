@@ -1,6 +1,6 @@
 # The Human Override
 
-A 37:45 university presentation on AI-assisted command, autonomous weapons, research on unsafe agent behavior, and human responsibility. It has 42 scenes across three phases and a final reflection, with 80 manually advanced visual beats. Optional audience discussion questions are available in the final speaker notes.
+A 39:54 university presentation on AI-assisted command, autonomous weapons, research on unsafe agent behavior, and human responsibility. It has 48 scenes across three phases and a final reflection, with 86 manually advanced visual beats. Optional audience discussion questions are available in the final speaker notes.
 
 [Open the presentation](https://ys47.github.io/the-human-override/)
 
@@ -13,7 +13,7 @@ npm ci
 npm run dev
 ```
 
-Open the URL printed by Vite. Click the stage or press Space to advance. The project uses the `/the-human-override/` base path in development and on GitHub Pages. A link such as `#scene-30.2` opens scene 30, beat 2.
+Open the URL printed by Vite. Click the stage or press Space to advance. The project uses the `/the-human-override/` base path in development and on GitHub Pages. Existing numbered links keep their original destinations. New scenes have named links such as `#scene-bench-test.1`.
 
 | Control | Action |
 | --- | --- |
@@ -29,7 +29,7 @@ Open the URL printed by Vite. Click the stage or press Space to advance. The pro
 | ? | Open keyboard help |
 | Escape | Close the overlay, restore from blackout, or exit fullscreen |
 
-Notes open over the stage on the same screen. The diagrams, photos, fonts and research figures are served by GitHub Pages. The optional Democracy Now! interview and publication links use external websites. Audio cues begin muted.
+Notes open over the stage on the same screen. GitHub Pages serves the diagrams, photos, fonts, research figures and two silent Robocurve excerpts. Use the video controls to play an excerpt. Blackout and presenter panels pause it. The optional Democracy Now! interview and publication links use external websites. Audio cues begin muted.
 
 ## Edit content
 

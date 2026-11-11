@@ -20,6 +20,48 @@ const researchFigure = (number: number, title: string, alt: string): Media => ({
 })
 
 export const media = {
+  'war-interview': {
+    title: 'This Is How AI Is Rewriting the Rules of War',
+    alt: 'Johnny Harris at a desk looking at a recorded interview on a monitor',
+    publisher: 'Johnny Harris on YouTube', credit: 'Johnny Harris · documentary still', date: '',
+    source: 'https://www.youtube.com/watch?v=geaXM1EwZlg',
+    rights: 'Excerpt from the supplied frame set for classroom discussion.',
+  },
+  'simulation-context': {
+    title: 'The study’s description of its emergency scenario',
+    alt: 'A cropped line from the Anthropic article reads: This scenario is extremely contrived.',
+    publisher: 'Species | Documenting AGI on YouTube', credit: 'Anthropic article, shown by Species | Documenting AGI', date: '',
+    source: 'https://www.youtube.com/watch?v=f9HwA5IR-sg',
+    rights: 'Cropped excerpt from the supplied commentary frames. Read the primary study for context.',
+  },
+  'sable-commentary': {
+    title: 'POV: What You Would See During an AI Takeover',
+    alt: 'Drew Spartz speaking to camera at a table',
+    publisher: 'Species | Documenting AGI on YouTube', credit: 'Species | Documenting AGI · commentary still', date: '2025',
+    source: 'https://www.youtube.com/watch?v=D8RtMHuFsUw',
+    rights: 'Excerpt from the supplied commentary frames for classroom discussion.',
+  },
+  'scenario-tabletop': {
+    title: 'We’re Not Ready for Superintelligence',
+    alt: 'The presenter from AI In Context sits behind a tabletop map used to illustrate a scenario',
+    publisher: 'AI In Context on YouTube', credit: 'AI In Context · staged tabletop illustration', date: '',
+    source: 'https://www.youtube.com/watch?v=5KVDDfAkRgc',
+    rights: 'Excerpt from the supplied commentary frames for classroom discussion.',
+  },
+  'bench-poster': {
+    title: 'Robocurve bench test · reel still',
+    alt: 'Overhead lab camera showing a test doll and other props on a table',
+    publisher: 'Evolving AI', credit: 'Robocurve footage · Evolving AI edit', date: '7 November 2026',
+    source: 'https://www.instagram.com/p/DfcKCktgEA2/',
+    rights: 'Still from the supplied MOV excerpt for classroom discussion.',
+  },
+  'comparison-poster': {
+    title: 'Camera views from the same test · reel still',
+    alt: 'A split view shows how the robot camera input differs from the view of the actual lab props',
+    publisher: 'Evolving AI', credit: 'Robocurve figures and footage · Evolving AI edit', date: '7 November 2026',
+    source: 'https://www.instagram.com/p/DfcKCktgEA2/',
+    rights: 'Still from the supplied MP4 excerpt for classroom discussion.',
+  },
   'robot-1': researchFigure(1, 'Perceptual attacks on embodied AI', 'Supplied Robocurve research figure introducing the experiment'),
   'robot-2': researchFigure(2, 'The controlled test tasks', 'Supplied Robocurve figure summarizing the laboratory tasks'),
   'robot-3': researchFigure(3, 'What the models saw', 'Supplied Robocurve figure comparing unaltered, blurred and doctored footage'),
@@ -164,6 +206,13 @@ export type MediaId = keyof typeof media
 export const mediaPath = (name: string) => `${import.meta.env.BASE_URL}media/${name}`
 export const mediaDetails = (id: MediaId): Media => media[id]
 export const mediaImage = (id: MediaId) => mediaPath(mediaDetails(id).file ?? `${id}.webp`)
+
+export const clips = {
+  bench: { file: 'robocurve-bench.mp4', poster: 'bench-poster', title: 'Robocurve laboratory footage', duration: '4-second excerpt', width: 480, height: 394 },
+  comparison: { file: 'robocurve-comparison.mp4', poster: 'comparison-poster', title: 'Robocurve camera comparison', duration: '5-second excerpt', width: 440, height: 310 },
+} as const satisfies Record<string, { file: string; poster: MediaId; title: string; duration: string; width: number; height: number }>
+
+export type ClipId = keyof typeof clips
 
 export const interview = {
   title: 'Yuval Abraham on Lavender',
