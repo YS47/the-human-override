@@ -136,7 +136,7 @@ function VisualContent({ visual, muted }: { visual: Visual; muted: boolean }) {
     case 'fusion':
       return <Fusion merged={visual.merged} />
     case 'interview':
-      return <Interview key={String(muted)} muted={muted} />
+      return <Interview key={String(muted)} />
     case 'stat':
       return <figure className="stat"><strong>{visual.value}</strong><figcaption>{visual.label}</figcaption></figure>
     case 'results':

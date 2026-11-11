@@ -157,7 +157,7 @@ test('audio cues play only when unmuted', async ({ page }) => {
 
 test('a missing photo and an unavailable video preserve evidence links and navigation', async ({ page }) => {
   await page.route('**/media/ngc2.webp', route => route.abort())
-  await page.route('**/youtube-nocookie.com/**', route => route.abort())
+  await page.route('**/democracynow.org/embed/story/**', route => route.abort())
   await page.goto('./#scene-10.1')
   await expect(stage(page).getByRole('status')).toContainText('Image unavailable')
   await expect(stage(page).getByRole('link', { name: /NGC2 field training/ })).toHaveAttribute('href', /army\.mil/)

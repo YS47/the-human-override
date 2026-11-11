@@ -170,5 +170,5 @@ export const interview = {
   publisher: 'Democracy Now!', date: '5 April 2024', timing: '00:00 · interview introduction',
   use: 'Hear the reporter describe the investigation in his own words. Use the report and the IDF statement to compare the claims.',
   source: 'https://www.democracynow.org/2024/4/5/israel_ai',
-  embed: 'https://www.youtube-nocookie.com/embed/4RmNJH4UN3s?start=0',
+  embed: 'https://www.democracynow.org/embed/story/2024/4/5/israel_ai',
 }

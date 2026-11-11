@@ -63,7 +63,7 @@ function sceneMedia(moment: Moment): MediaId[] {
   return [...new Set([...current, ...ids, ...(moment.scene.extras ?? [])])]
 }
 
-export function Interview({ muted }: { muted: boolean }) {
+export function Interview() {
   const [loaded, setLoaded] = useState(false)
   const [waiting, setWaiting] = useState(false)
   useEffect(() => {
@@ -78,7 +78,7 @@ export function Interview({ muted }: { muted: boolean }) {
       ? <>
         {waiting && <p role="status">Opening the interview player…</p>}
         <iframe title={interview.title} onLoad={() => setWaiting(false)} onError={() => setWaiting(false)}
-          src={interview.embed + (muted ? '&mute=1' : '')} allow="encrypted-media; picture-in-picture" allowFullScreen />
+          src={interview.embed} allow="encrypted-media; picture-in-picture" allowFullScreen />
         <button onClick={() => { setLoaded(false); setWaiting(false) }}>Close player</button>
       </>
       : <button onClick={() => { setLoaded(true); setWaiting(true) }}>Load interview player</button>}
@@ -161,7 +161,7 @@ function Inspector({ moment, muted }: { moment: Moment; muted: boolean }) {
             : details.rights}</span></figcaption>
       </figure>
     </>}
-    {moment.scene.interview && <Interview key={String(muted)} muted={muted} />}
+    {moment.scene.interview && <Interview key={String(muted)} />}
     {moment.scene.sources.map(id => {
       const entry = evidence[id]
       return <article className="citation" key={id}>
