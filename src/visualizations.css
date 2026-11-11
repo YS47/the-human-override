@@ -56,7 +56,11 @@
   padding: 0;
   list-style: none;
 }
-.transport-map { grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr) minmax(0, 1fr); }
+.transport-map {
+  --transport-gap: clamp(16px, 3vw, 54px);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: var(--transport-gap);
+}
 .map-node {
   position: relative;
   display: grid;
@@ -73,21 +77,30 @@
   overflow-wrap: anywhere;
 }
 .map-hub { border-color: var(--accent); animation: signal-in 570ms var(--ease) both; }
-.transport-map > .map-node::after, .agent-loop > li:not(:last-child)::after {
+.transport-map > .map-node::after {
+  content: '';
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 100%;
+  inline-size: calc(var(--transport-gap) + 2px);
+  block-size: 2px;
+  background: var(--accent);
+}
+.agent-loop > li:not(:last-child)::after {
   content: '→';
   position: absolute;
   inset-inline-start: calc(100% + clamp(2px, .4vw, 8px));
   color: var(--signal);
   font: 500 clamp(.65rem, 1.5vw, 1.6rem)/1 var(--mono);
 }
-.map-branches { position: relative; padding: 0 0 0 12px; list-style: none; display: grid; gap: 10px; }
+.map-branches { position: relative; margin: 0; padding: 0 0 0 12px; list-style: none; display: grid; gap: 10px; }
 .map-branches::before {
   content: '';
   position: absolute;
   inset: 25% auto 25% 0;
   width: 12px;
-  border-block: 1px solid var(--accent);
-  border-inline-start: 1px solid var(--accent);
+  border-block: 2px solid var(--accent);
+  border-inline-start: 2px solid var(--accent);
 }
 .map-branches .map-node { min-height: 48px; }
 .return-line {
@@ -150,15 +163,15 @@
 
 @media (max-width: 670px) {
   .report-panels { grid-template-columns: minmax(0, 1fr); }
-  .transport-map { grid-template-columns: minmax(0, 1fr); gap: 22px; max-width: 380px; margin-inline: auto; }
+  .transport-map { --transport-gap: 22px; grid-template-columns: minmax(0, 1fr); max-width: 380px; margin-inline: auto; }
   .transport-map > .map-node::after {
-    content: '↓';
-    inset: calc(100% + 4px) auto auto 50%;
-    transform: translateX(-50%);
-    font-size: 1rem;
+    inset-block-start: 100%;
+    inset-inline-start: calc(50% - 1px);
+    inline-size: 2px;
+    block-size: calc(var(--transport-gap) + 2px);
   }
   .transport-map .map-branches { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 9px 0 0; }
-  .transport-map .map-branches::before { inset: 0 25% auto; width: auto; height: 9px; border: 1px solid var(--accent); border-bottom: 0; }
+  .transport-map .map-branches::before { inset: 0 25% auto; width: auto; height: 9px; border: 2px solid var(--accent); border-bottom: 0; }
   .quiz-feedback { align-items: flex-start; flex-direction: column; }
   .quiz-progress progress { min-width: 75px; }
 }

@@ -69,6 +69,7 @@ h1, p, figure, dl, ol { margin: 0; }
   text-wrap: balance;
 }
 .stage h1 em { color: var(--signal); font-weight: 400; }
+.stage h1 mark { display: inline-block; padding-inline: .05em; background: #F5D66E; color: var(--bg); line-height: .9; }
 .support {
   margin-top: .8em;
   color: var(--muted);
@@ -259,6 +260,7 @@ figcaption a:hover { text-decoration: underline; }
   overflow-wrap: anywhere;
 }
 .pair-columns span:nth-child(2) { border-color: var(--accent); }
+.pair-diagram[data-base-reveal] .pair-columns > span:first-child { border-color: #C44536; }
 .black-stage .pair-columns span { border-color: var(--rule); }
 .pair-columns > span, .base-field > div {
   --compare-travel: clamp(12px, 3vw, 52px);

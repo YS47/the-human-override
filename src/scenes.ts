@@ -27,7 +27,7 @@ export type Visual =
   | { kind: 'image'; id: MediaId; detail?: boolean }
   | { kind: 'source'; id: EvidenceId }
   | { kind: 'path'; labels: string[] }
-  | { kind: 'pair'; left: string; right: string; detail: string }
+  | { kind: 'pair'; left: string; right: string; detail: string; baseReveal?: boolean }
   | { kind: 'detector'; level: 0 | 1 | 2 }
   | { kind: 'stat'; value: string; label: string }
   | { kind: 'results'; count: 1 | 2 | 3 }
@@ -48,6 +48,7 @@ export type Beat = {
   motion: Transition
   text?: string
   label?: string
+  highlight?: string
   visual?: Visual
   note?: string
   cue?: 'reveal' | 'threshold'
@@ -150,8 +151,12 @@ const control: Scene[] = [
     notes: 'Base A is the fictional AI-assisted team. Faster coordination can help. The comparison cannot establish a winner. Give the room time to answer the second question.',
     next: 'The Army is testing an architecture meant to improve coordination.',
     beats: [
-      beat('Base A can share a picture sooner.', 'split', 'split', { visual: pair('Base A · AI assistance', 'Base B · human-led review', 'Fictional comparison') }),
-      beat('Does making decisions faster always mean making better decisions?', 'statement', 'replace', { note: 'Wait for one or two answers.' }),
+      beat('Base A can share a picture sooner.', 'split', 'split', {
+        visual: { kind: 'pair', left: 'Base A · AI assistance', right: 'Base B · human-led review', detail: 'Fictional comparison', baseReveal: true },
+      }),
+      beat('Does making decisions faster always mean making better decisions?', 'statement', 'replace', {
+        highlight: 'decisions', note: 'Wait for one or two answers.',
+      }),
     ],
   },
   {

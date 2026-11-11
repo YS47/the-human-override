@@ -149,7 +149,7 @@ function VisualContent({ visual, muted, covered }: { visual: Visual; muted: bool
       )
     case 'pair':
       return (
-        <figure className="pair-diagram">
+        <figure className="pair-diagram" data-base-reveal={visual.baseReveal || undefined}>
           <div className="pair-columns">
             <span>{visual.left}</span><span>{visual.right}</span>
           </div>
@@ -199,6 +199,8 @@ export function Stage({ moment, advance, muted, covered }: { moment: Moment; adv
   const { beat, chapter } = moment
   const visual = beat.visual
   const reflectionComma = chapter.phase === 'humanity' ? beat.title.indexOf(',') + 1 : 0
+  const highlightedTitle = beat.highlight && beat.title.split(beat.highlight).map((part, index) =>
+    <Fragment key={index}>{index > 0 && <mark>{beat.highlight}</mark>}{part}</Fragment>)
   // Keep comparison footage and chart rows mounted when the next beat builds on them.
   const visualKey = visual?.kind === 'image' || visual?.kind === 'clip' ? visual.id :
     visual?.kind === 'path' || visual?.kind === 'pair' || visual?.kind === 'stat' ? moment.hash : visual?.kind
@@ -213,7 +215,9 @@ export function Stage({ moment, advance, muted, covered }: { moment: Moment; adv
       }}>
       <div className="stage-copy">
         {beat.label && <p className="eyebrow">{beat.label}</p>}
-        <h1>{reflectionComma ? <>{beat.title.slice(0, reflectionComma)} <em>{beat.title.slice(reflectionComma).trim()}</em></> : beat.title}</h1>
+        <h1>{reflectionComma
+          ? <>{beat.title.slice(0, reflectionComma)} <em>{beat.title.slice(reflectionComma).trim()}</em></>
+          : highlightedTitle || beat.title}</h1>
         {beat.text && <p className="support">{beat.text}</p>}
       </div>
       {visual && <div className="stage-visual" data-visual={visual.kind}>

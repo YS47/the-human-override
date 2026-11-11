@@ -250,7 +250,12 @@ test('the conflict comparison and explanatory charts preserve their labels and c
   }
   await expect(stage(page)).not.toContainText(/\bBase [AB]\b/)
   await page.goto('./#scene-09.1')
-  await expect(stage(page).getByText('Base A · AI assistance')).toBeVisible()
+  await expect(stage(page).getByText('Base A · AI assistance')).toHaveCSS('border-color', 'rgb(196, 69, 54)')
+  await expect(stage(page).getByText('Base B · human-led review')).toHaveCSS('border-color', 'rgb(111, 168, 182)')
+  await next(page)
+  const highlighted = stage(page).getByRole('heading').locator('mark')
+  await expect(highlighted).toHaveText(['decisions', 'decisions'])
+  await expect(highlighted.first()).toHaveCSS('background-color', 'rgb(245, 214, 110)')
   await page.goto('./#scene-25.1')
   await expect(stage(page).locator('.alert-grid span')).toHaveCount(59)
   await next(page)
@@ -260,7 +265,7 @@ test('the conflict comparison and explanatory charts preserve their labels and c
   await expect(stage(page).getByText('Result returns to the model')).toBeVisible()
 })
 
-test('transport labels fit their cards at desktop and phone widths', async ({ page }) => {
+test('transport cards fit their labels and use connecting lines at desktop and phone widths', async ({ page }) => {
   await page.goto('./#scene-11.1')
   const nodes = stage(page).locator('.transport-map .map-node')
   await expect(nodes).toHaveCount(4)
@@ -278,6 +283,25 @@ test('transport labels fit their cards at desktop and phone widths', async ({ pa
       return inside ? [] : [card.textContent]
     }))
     expect(overflow, `at ${width}px`).toEqual([])
+    const links = await stage(page).locator('.transport-map').evaluate((map, vertical) => {
+      const cards = Array.from(map.children)
+      return cards.slice(0, -1).map((card, index) => {
+        const style = getComputedStyle(card, '::after')
+        const start = card.getBoundingClientRect()
+        const end = cards[index + 1].getBoundingClientRect()
+        return {
+          content: style.content,
+          thickness: parseFloat(vertical ? style.width : style.height),
+          length: parseFloat(vertical ? style.height : style.width),
+          gap: vertical ? end.top - start.bottom : end.left - start.right,
+        }
+      })
+    }, width <= 670)
+    for (const link of links) {
+      expect(link.content).toBe('""')
+      expect(link.thickness).toBe(2)
+      expect(link.length).toBeGreaterThanOrEqual(link.gap)
+    }
   }
 })
 
