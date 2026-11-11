@@ -120,7 +120,7 @@ h1:focus { outline: none; }
   mask-image: linear-gradient(90deg, #000, transparent 68%);
   z-index: -1;
 }
-.stage-copy { width: min(780px, 100%); position: relative; animation: reveal 520ms 85ms both; }
+.stage-copy { width: min(780px, 100%); position: relative; animation: reveal 440ms 65ms both; }
 .eyebrow, .mono { font: .7rem/1.5 var(--mono); letter-spacing: .11em; text-transform: uppercase; }
 .eyebrow { color: var(--highlight); }
 .scene-overline { display: flex; align-items: center; gap: 13px; margin-bottom: clamp(18px, 3.4vh, 32px); }
@@ -151,13 +151,12 @@ h1:focus { outline: none; }
   z-index: -1;
   overflow: hidden;
   background: var(--surface);
-  animation: photo-in 900ms ease both;
+  animation: photo-in 560ms ease both;
 }
 .hero-media img { width: 100%; height: 100%; object-fit: cover; object-position: 65% center; display: block; filter: saturate(.65) brightness(.82); }
 .hero-media[data-photo='command-post'] img { object-position: 65% 48%; filter: saturate(.65) brightness(.94); }
 .hero-media[data-photo='drone'] img { object-position: 61% 58%; }
 .hero-media[data-photo='communications'] img { object-position: 72% 43%; }
-.hero-media[data-photo='authors'] img { object-position: 66% 25%; }
 .media-wash {
   position: absolute;
   inset: 0;
@@ -180,11 +179,33 @@ h1:focus { outline: none; }
   font-size: .75rem;
   text-align: right;
 }
-.hero-media figcaption a { display: flex; align-items: center; justify-content: flex-end; gap: 6px; font-weight: 650; text-decoration: none; }
-.hero-media figcaption a:hover { text-decoration: underline; }
-.hero-media figcaption svg { width: 12px; height: 12px; }
-.hero-media figcaption small { color: var(--muted); font-size: .67rem; }
-.caption-dot { background: var(--accent); border-radius: 50%; height: 5px; width: 5px; flex: 0 0 auto; }
+.media-caption { display: grid; gap: 5px; }
+.media-caption a { font-weight: 650; text-decoration: none; text-underline-offset: .22em; }
+.media-caption a:hover { text-decoration: underline; }
+.media-caption a svg { width: 12px; height: 12px; vertical-align: middle; margin-left: 3px; }
+.media-caption small { color: var(--muted); font-size: .75rem; }
+.media-caption p { color: var(--muted); font-size: .85rem; }
+.hero-media .media-caption .eyebrow, .hero-media .media-caption small { font-size: .66rem; }
+.framed-media {
+  display: grid;
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.framed-media img {
+  display: block;
+  width: 100%;
+  height: min(42svh, 440px);
+  object-fit: contain;
+  background: var(--background);
+}
+.framed-media .media-caption { padding: 13px 17px; border-top: 1px solid var(--line); }
+.book-media {
+  width: min(100%, 360px);
+  margin-inline: auto;
+  box-shadow: 0 20px 50px #0005;
+}
+.book-media img { padding: 18px; height: min(43svh, 440px); }
+.gallery-media img { height: auto; max-height: clamp(150px, calc(84svh - 350px), 43svh); }
 
 .stage-with-evidence {
   grid-template-columns: minmax(0, 1.24fr) minmax(0, .76fr);
@@ -192,7 +213,7 @@ h1:focus { outline: none; }
   background: radial-gradient(ellipse at 100% 44%, color-mix(in srgb, var(--secondary) 61%, transparent), transparent 68%);
 }
 .stage-with-evidence h1 { font-size: clamp(3.6rem, min(7.1vw, 12vh), 8.5rem); }
-.stage-evidence { align-self: center; animation: reveal 580ms 160ms both; }
+.stage-evidence { align-self: center; animation: reveal 470ms 100ms both; }
 .document-stack { display: grid; gap: 10px; }
 .document-stack a {
   background: color-mix(in srgb, var(--surface) 83%, var(--background));
@@ -349,7 +370,6 @@ kbd { font: .7rem var(--mono); border: 1px solid var(--line); padding: 2px 4px; 
 
 @media (min-width: 901px) and (min-height: 710px) {
   .stage-with-photo { padding-bottom: clamp(72px, 10vh, 125px); }
-  .hero-media[data-photo='authors'] { left: 45%; }
 }
 @media (max-width: 1030px) {
   .topbar-center { display: none; }

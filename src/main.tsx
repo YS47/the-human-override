@@ -8,12 +8,12 @@ import '@fontsource/instrument-serif/latin-400.css'
 import '@fontsource/instrument-serif/latin-400-italic.css'
 import { discussion, phases, scenes, type Scene } from './scenes'
 import { evidence } from './evidence'
-import { media, mediaPath } from './media'
+import { mediaDetails, mediaImage, type MediaId } from './media'
 import { Explainer, TrialChart } from './Explainers'
 import './style.css'
 
-type Overlay = 'chapters' | 'notes' | 'evidence' | 'explore' | 'discussion'
-type IconName = 'grid' | 'notes' | 'expand' | 'shrink' | 'left' | 'right' | 'external' | 'close' | 'source'
+type Overlay = 'chapters' | 'notes' | 'evidence' | 'explore' | 'discussion' | 'visuals'
+type IconName = 'grid' | 'notes' | 'expand' | 'shrink' | 'left' | 'right' | 'external' | 'close' | 'source' | 'image'
 
 const icons: Record<IconName, ReactNode> = {
   grid: <><rect x="3" y="3" width="6" height="6" rx=".5" /><rect x="15" y="3" width="6" height="6" rx=".5" /><rect x="3" y="15" width="6" height="6" rx=".5" /><rect x="15" y="15" width="6" height="6" rx=".5" /></>,
@@ -25,6 +25,7 @@ const icons: Record<IconName, ReactNode> = {
   external: <path d="M6 18 18 6M7 6h11v11" />,
   close: <path d="m5 5 14 14M19 5 5 19" />,
   source: <><rect x="4" y="3" width="16" height="18" rx="1" /><path d="M8 8h8m-8 4h8m-8 4h5" /></>,
+  image: <><rect x="3" y="4" width="18" height="16" rx="1" /><circle cx="8" cy="9" r="1" /><path d="m3 17 5-4 3 2 4-5 6 7" /></>,
 }
 
 function Icon({ name }: { name: IconName }) {
@@ -73,7 +74,8 @@ function PresenterNotes({ scene, enteredAt, startedAt, rehearsal }: {
 }
 
 function EvidencePanel({ scene }: { scene: Scene }) {
-  const photo = scene.visual ? media[scene.visual] : undefined
+  const visuals = new Set(scene.gallery)
+  if (scene.visual) visuals.add(scene.visual)
   return (
     <div className="evidence-list">
       {scene.sources.map(id => {
@@ -87,7 +89,10 @@ function EvidencePanel({ scene }: { scene: Scene }) {
           </article>
         )
       })}
-      {photo && <article className="source-card"><p className="eyebrow">Photograph</p><h3><a href={photo.source} target="_blank" rel="noreferrer">{photo.title} <Icon name="external" /></a></h3><p className="source-meta">{photo.credit} · {photo.date}</p><p>{photo.rights}</p></article>}
+      {[...visuals].map(id => {
+        const image = mediaDetails(id)
+        return <article className="source-card" key={id}><p className="eyebrow">{image.kind ?? 'Documentary photograph'}</p><h3><a href={image.source} target="_blank" rel="noreferrer">{image.title} <Icon name="external" /></a></h3><p className="source-meta">{[image.credit, image.date].filter(Boolean).join(' · ')}</p><p>{image.rights} {image.note}</p></article>
+      })}
     </div>
   )
 }
@@ -110,10 +115,38 @@ function EvidenceVisual({ scene }: { scene: Scene }) {
   )
 }
 
+function MediaCaption({ id }: { id: MediaId }) {
+  const image = mediaDetails(id)
+  return (
+    <figcaption className="media-caption">
+      <span className="eyebrow">{image.kind ?? 'Documentary photograph'}</span>
+      <a href={image.source} target="_blank" rel="noreferrer">{image.title} <Icon name="external" /></a>
+      <small>{[image.credit, image.date].filter(Boolean).join(' · ')}</small>
+      {image.note && <p>{image.note}</p>}
+    </figcaption>
+  )
+}
+
+function Visuals({ gallery }: { gallery: MediaId[] }) {
+  const [selected, setSelected] = useState(gallery[0])
+  return (
+    <>
+      <div className="choices" role="group" aria-label="Choose an image">
+        {gallery.map(id => <button key={id} aria-pressed={id === selected} onClick={() => setSelected(id)}>{mediaDetails(id).kind}</button>)}
+      </div>
+      <figure className="framed-media gallery-media">
+        <img src={mediaImage(selected)} alt={mediaDetails(selected).alt} />
+        <MediaCaption id={selected} />
+      </figure>
+    </>
+  )
+}
+
 function Stage({ scene, heading, open }: { scene: Scene, heading: React.RefObject<HTMLHeadingElement | null>, open: (overlay: Overlay) => void }) {
   const phase = phases[scene.phase]
-  const photo = scene.visual ? media[scene.visual] : undefined
-  const [photoFailed, setPhotoFailed] = useState(false)
+  const [mediaFailed, setMediaFailed] = useState(false)
+  const visual = mediaFailed ? undefined : scene.visual
+  const fullBleed = visual && visual !== 'book-cover'
 
   if (scene.phase === 3) {
     return (
@@ -127,27 +160,28 @@ function Stage({ scene, heading, open }: { scene: Scene, heading: React.RefObjec
   }
 
   return (
-    <main className={`stage ${photo && !photoFailed ? 'stage-with-photo' : 'stage-with-evidence'}`} id="presentation">
-      {photo && !photoFailed && (
-        <figure className="hero-media" data-photo={scene.visual}>
-          <img src={mediaPath(`${scene.visual}.webp`)} alt={photo.alt} onError={() => setPhotoFailed(true)} />
+    <main className={`stage ${fullBleed ? 'stage-with-photo' : 'stage-with-evidence'}`} id="presentation">
+      {fullBleed && (
+        <figure className="hero-media" data-photo={visual}>
+          <img src={mediaImage(visual)} alt={mediaDetails(visual).alt} onError={() => setMediaFailed(true)} />
           <div className="media-wash" aria-hidden="true" />
-          <figcaption>
-            <a href={photo.source} target="_blank" rel="noreferrer"><span className="caption-dot" />{photo.title} <Icon name="external" /></a>
-            <small>{photo.credit} · {photo.date}</small>
-          </figcaption>
+          <MediaCaption id={visual} />
         </figure>
       )}
       <div className="stage-copy">
-        <p className="eyebrow scene-overline"><span>{phase.numeral}</span>{scene.id === '1.2' ? 'NGC2' : phase.title}</p>
+        <p className="eyebrow scene-overline"><span>{scene.id}</span>{scene.id === '1.2' ? 'NGC2' : phase.title}</p>
         <h1 ref={heading} tabIndex={-1}>{scene.lines.map((line, index) => <span key={line} className={index ? 'title-accent' : undefined}>{line}</span>)}</h1>
         <p className="deck">{scene.deck}</p>
         <div className="stage-actions">
           <button className="button primary" onClick={() => open('explore')}>{scene.explore} <Icon name="right" /></button>
           <button className="button quiet" onClick={() => open('evidence')}><Icon name="source" /> Evidence</button>
+          {scene.gallery && <button className="button quiet" onClick={() => open('visuals')}><Icon name="image" /> {scene.id === '1.1' ? 'Video stills' : 'Visuals'}</button>}
         </div>
       </div>
-      {(!photo || photoFailed) && <aside className="stage-evidence" aria-label="Featured evidence"><EvidenceVisual scene={scene} /></aside>}
+      {!fullBleed && <aside className="stage-evidence" aria-label="Featured evidence">
+        {visual ? <figure className="framed-media book-media"><img src={mediaImage(visual)} alt={mediaDetails(visual).alt} onError={() => setMediaFailed(true)} /><MediaCaption id={visual} /></figure>
+          : <EvidenceVisual scene={scene} />}
+      </aside>}
     </main>
   )
 }
@@ -242,7 +276,7 @@ function App() {
 
   const titles: Record<Overlay, string> = {
     chapters: 'Chapters', notes: scene.title, evidence: 'Sources and evidence',
-    explore: scene.explore ?? scene.title, discussion: 'Audience Q&A',
+    explore: scene.explore ?? scene.title, discussion: 'Audience Q&A', visuals: scene.id === '1.1' ? 'Video stills' : 'Scene visuals',
   }
 
   return (
@@ -299,6 +333,7 @@ function App() {
             </>}
             {overlay === 'notes' && <PresenterNotes scene={scene} enteredAt={enteredAt} startedAt={startedAt} rehearsal={rehearsal} />}
             {overlay === 'evidence' && <EvidencePanel scene={scene} />}
+            {overlay === 'visuals' && scene.gallery && <Visuals gallery={scene.gallery} />}
             {overlay === 'explore' && <Explainer scene={scene.id} />}
             {overlay === 'discussion' && <><button className="button" onClick={() => setOverlay('chapters')}><Icon name="left" /> Chapters</button><ol className="discussion">{discussion.map(question => <li key={question}>{question}</li>)}</ol></>}
           </div>

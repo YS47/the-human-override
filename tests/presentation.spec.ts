@@ -100,6 +100,31 @@ test('enters and exits fullscreen', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Fullscreen', exact: true })).toBeVisible()
 })
 
+test('shows the supplied video stills and book cover with source captions', async ({ page }) => {
+  await page.goto('./#scene-1.1')
+  await page.getByRole('button', { name: 'Video stills', exact: true }).click()
+  const panel = page.getByRole('dialog')
+  const image = panel.getByRole('img')
+  await expect(image).toHaveAttribute('src', /war-title\.png$/)
+  await expect.poll(() => image.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0)
+  await expect(panel.getByRole('link', { name: 'How AI Is Transforming War' })).toHaveAttribute('href', /geaXM1EwZlg/)
+  await panel.getByRole('button', { name: 'Illustrated video still' }).click()
+  await expect(image).toHaveAttribute('src', /kill-chain\.png$/)
+  await expect.poll(() => image.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0)
+  await expect(panel.getByText(/six-stage model.*includes Track/)).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(page.getByRole('button', { name: 'Video stills', exact: true })).toBeFocused()
+
+  await page.goto('./#scene-3.3')
+  const book = page.getByRole('img', { name: /cover of If Anyone Builds It/ })
+  await expect.poll(() => book.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0)
+  await expect(page.getByRole('link', { name: 'If Anyone Builds It, Everyone Dies' })).toHaveAttribute('href', /hachettebookgroup/)
+  await page.getByRole('button', { name: 'Visuals', exact: true }).click()
+  await panel.getByRole('button', { name: 'Author portrait' }).click()
+  await expect(panel.getByRole('img')).toHaveAttribute('src', /authors\.webp$/)
+  await expect.poll(() => panel.getByRole('img').evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0)
+})
+
 test('fits a narrow screen, loads local photos and applies the four approved backgrounds', async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 800 })
   await page.goto('./')
@@ -112,7 +137,7 @@ test('fits a narrow screen, loads local photos and applies the four approved bac
     await expect(segments.nth(index)).toHaveAttribute('aria-current', 'step')
     await expect(page.locator('meta[name=theme-color]')).toHaveAttribute('content', background)
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(360)
-    if (photoScenes.has(index)) await expect.poll(() => page.locator('.hero-media img').evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0)
+    if (photoScenes.has(index)) await expect.poll(() => page.locator('main figure img').evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0)
   }
   await expect(page.locator('.reflection-text')).toHaveCSS('animation-name', 'none')
 })

@@ -1,3 +1,16 @@
+type Media = {
+  title: string
+  alt: string
+  publisher: string
+  credit: string
+  date: string
+  source: string
+  rights: string
+  kind?: string
+  file?: string
+  note?: string
+}
+
 export const media = {
   'command-post': {
     title: 'Command Post Computing Environment',
@@ -40,11 +53,40 @@ export const media = {
     publisher: 'Book media kit via Wikimedia Commons', credit: 'If Anyone Builds It, Everyone Dies media kit', date: 'c. 2023',
     source: 'https://commons.wikimedia.org/wiki/File:Eliezer_Yudkowsky_portrait,_c._2023.jpg',
     rights: 'CC0 1.0 · local WebP, resized · author portrait',
+    kind: 'Author portrait',
   },
-} as const
+  'war-title': {
+    title: 'How AI Is Transforming War',
+    alt: 'The words How AI Is Transforming War over a circular title graphic',
+    publisher: 'Johnny Harris on YouTube', credit: 'Johnny Harris', date: '',
+    source: 'https://www.youtube.com/watch?v=geaXM1EwZlg',
+    rights: 'User-supplied still from the video for classroom discussion.',
+    kind: 'Video title card', file: 'war-title.png',
+  },
+  'kill-chain': {
+    title: 'The kill chain, as shown in the video',
+    alt: 'Illustrated landscape with a graphic listing Find, Fix, Target, Engage and Assess',
+    publisher: 'Johnny Harris on YouTube', credit: 'Johnny Harris · The Kill Chain chapter', date: '',
+    source: 'https://www.youtube.com/watch?v=geaXM1EwZlg&t=271s',
+    rights: 'User-supplied still from the video for classroom discussion.',
+    kind: 'Illustrated video still', file: 'kill-chain.png',
+    note: 'The video graphic shows five stages. The six-stage model used in this presentation includes Track.',
+  },
+  'book-cover': {
+    title: 'If Anyone Builds It, Everyone Dies',
+    alt: 'Black and red cover of If Anyone Builds It, Everyone Dies by Eliezer Yudkowsky and Nate Soares',
+    publisher: 'Little, Brown and Company', credit: 'Little, Brown and Company', date: '2025',
+    source: 'https://www.hachettebookgroup.com/titles/eliezer-yudkowsky/if-anyone-builds-it-everyone-dies/9780316595667/',
+    rights: 'User-supplied image of the U.S. cover for classroom discussion.',
+    kind: 'Book cover', file: 'book-cover.png',
+    note: 'Eliezer Yudkowsky and Nate Soares',
+  },
+} satisfies Record<string, Media>
 
 export type MediaId = keyof typeof media
 export const mediaPath = (name: string) => `${import.meta.env.BASE_URL}media/${name}`
+export const mediaDetails = (id: MediaId): Media => media[id]
+export const mediaImage = (id: MediaId) => mediaPath(mediaDetails(id).file ?? `${id}.webp`)
 
 export const figures = [
   'Perceptual attack overview',

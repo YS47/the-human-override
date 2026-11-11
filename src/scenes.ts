@@ -17,6 +17,7 @@ export type Scene = {
   seconds: number
   explore?: string
   visual?: MediaId
+  gallery?: MediaId[]
   sources: EvidenceId[]
   notes: { say: string; improvise: string[]; terms: string; attribution: string; transition: string }
 }
@@ -25,7 +26,7 @@ export const scenes: Scene[] = [
   {
     id: '1.1', phase: 0, title: 'Two Armies, One Battlefield', lines: ['Two armies,', 'one battlefield.'],
     deck: 'Same resources. Different ways of making decisions. What changes when one side has AI assistance?',
-    seconds: 180, explore: 'Walk the six stages', visual: 'command-post', sources: ['doctrine', 'yolo'],
+    seconds: 180, explore: 'Walk the six stages', visual: 'command-post', gallery: ['war-title', 'kill-chain'], sources: ['doctrine', 'yolo'],
     notes: {
       say: 'Imagine two comparable forces. Base A has AI-assisted command tools. Base B has capable digital tools, with people doing more of the work of connecting reports. Which one has the advantage?',
       improvise: ['Pause for 10–15 seconds. Ask for a show of hands.', 'Step through the six stages. Keep the focus on what the team knows, what remains uncertain and who must answer for a decision.', 'Mention that a detector can suggest a label and location. Avoid inferring a winner or quoting a time advantage.'],
@@ -121,7 +122,7 @@ export const scenes: Scene[] = [
   {
     id: '3.3', phase: 2, title: 'Sable, AI Armageddon, and the Human Override', lines: ['Sable and two', 'possible futures.'],
     deck: 'Fiction makes the stakes visible. The choices we can make today are about testing, access and who has the authority to stop a system.',
-    seconds: 300, explore: 'Compare the two futures', visual: 'authors', sources: ['sable', 'race', 'slowdown'],
+    seconds: 300, explore: 'Compare the two futures', visual: 'book-cover', gallery: ['book-cover', 'authors'], sources: ['sable', 'race', 'slowdown'],
     notes: {
       say: 'Sable is a fictional AI in a book by Eliezer Yudkowsky and Nate Soares. The AI 2027 project imagines a race ending and a slowdown ending. These are scenarios for thinking about human choices under pressure.',
       improvise: ['Define instrumental convergence: information, resources and independence can help an imagined system pursue many different objectives.', 'Compare the two AI 2027 endings and ask what choices each imagines about deployment, inspection and oversight.', 'Return to Base A and Base B. Name five safeguards: testing, human authority, audit logs, scoped permissions with ways to stop a system, and institutional accountability.'],
