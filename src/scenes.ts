@@ -16,25 +16,85 @@ export type Scene = {
   deck: string
   seconds: number
   explore?: string
+  comparison?: { stage: number; baseA: string; baseB: string }
   visual?: MediaId
   gallery?: MediaId[]
   sources: EvidenceId[]
   notes: { say: string; improvise: string[]; terms: string; attribution: string; transition: string }
 }
 
+const chainStages = [
+  {
+    name: 'Find', visual: 'chain-find', question: 'What deserves a second look?',
+    deck: 'The first report gives the team something to check.',
+    baseA: 'Software flags a report for review.',
+    baseB: 'An analyst notices a report that may be relevant.',
+  },
+  {
+    name: 'Fix', visual: 'chain-fix', question: 'What does the evidence establish?',
+    deck: 'The teams check whether the available accounts agree.',
+    baseA: 'The interface shows conflicting records side by side.',
+    baseB: 'Reviewers compare the records and note what remains uncertain.',
+  },
+  {
+    name: 'Track', visual: 'chain-track', question: 'What changed since the last report?',
+    deck: 'New information can change what either team thinks it knows.',
+    baseA: 'The software groups updates by time and leaves gaps visible.',
+    baseB: 'People compare the updates and mark gaps in the record.',
+  },
+  {
+    name: 'Target', visual: 'chain-target', question: 'Who can question the recommendation?',
+    deck: 'A proposal still needs human judgment.',
+    baseA: 'The decision-maker reviews the recommendation and the evidence behind it.',
+    baseB: 'The decision-maker hears the team’s assessment and can ask for more evidence.',
+  },
+  {
+    name: 'Engage', visual: 'chain-engage', question: 'Who has authority to act?',
+    deck: 'The point of action makes responsibility concrete.',
+    baseA: 'In this example, people retain the authority to approve, pause or stop an action.',
+    baseB: 'The responsible person decides whether the action may proceed.',
+  },
+  {
+    name: 'Assess', visual: 'chain-assess', question: 'What happened, and what did we miss?',
+    deck: 'Both teams compare what actually happened with what they expected.',
+    baseA: 'Software summarizes observations for people to verify.',
+    baseB: 'The team compares observations during a review.',
+  },
+] as const
+
+const battlefieldScenes: Scene[] = chainStages.map((entry, index) => ({
+  id: `1.1-${entry.name.toLowerCase()}`,
+  phase: 0,
+  title: entry.name,
+  lines: [entry.name, entry.question],
+  deck: entry.deck,
+  seconds: 20,
+  visual: entry.visual,
+  comparison: { stage: index + 1, baseA: entry.baseA, baseB: entry.baseB },
+  sources: ['doctrine'],
+  notes: {
+    say: entry.deck,
+    improvise: [`Compare the two approaches and ask the room: ${entry.question}`],
+    terms: 'F2T2EA · human oversight',
+    attribution: 'Base A and Base B are fictional. The caption identifies the context of the illustration.',
+    transition: chainStages[index + 1]?.question ?? 'How are militaries connecting this information in practice?',
+  },
+}))
+
 export const scenes: Scene[] = [
   {
     id: '1.1', phase: 0, title: 'Two Armies, One Battlefield', lines: ['Two armies,', 'one battlefield.'],
     deck: 'Same resources. Different ways of making decisions. What changes when one side has AI assistance?',
-    seconds: 180, explore: 'Walk the six stages', visual: 'command-post', gallery: ['war-title', 'kill-chain'], sources: ['doctrine', 'yolo'],
+    seconds: 60, visual: 'command-post', gallery: ['war-title', 'kill-chain'], sources: ['doctrine', 'yolo'],
     notes: {
       say: 'Imagine two comparable forces. Base A has AI-assisted command tools. Base B has capable digital tools, with people doing more of the work of connecting reports. Which one has the advantage?',
       improvise: ['Pause for 10–15 seconds. Ask for a show of hands.', 'Step through the six stages. Keep the focus on what the team knows, what remains uncertain and who must answer for a decision.', 'Mention that a detector can suggest a label and location. Avoid inferring a winner or quoting a time advantage.'],
       terms: 'F2T2EA · decision support · object detection',
       attribution: 'The bases are fictional. The archive photo shows an actual Army command post. The Air Force doctrine publication supplies the stage names.',
-      transition: 'If collecting information is one challenge, connecting all that information is another. Is any military actually trying to build something like Base A?',
+      transition: 'Start with the first report. What would each team notice?',
     },
   },
+  ...battlefieldScenes,
   {
     id: '1.2', phase: 0, title: 'NGC2: The Connected Battlefield', lines: ['The connected', 'battlefield.'],
     deck: 'Inside the U.S. Army’s Next Generation Command and Control initiative, four layers move information from the field to the people who use it.',

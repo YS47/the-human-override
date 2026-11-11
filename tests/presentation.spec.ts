@@ -9,6 +9,8 @@ test('moves forward and backward with a presenter remote and chapter links', asy
   await page.keyboard.press('Space')
   await expect(page.getByRole('heading', heading(/two armies/i))).toBeVisible()
   await page.keyboard.press('ArrowRight')
+  await expect(page).toHaveURL(/#scene-1.1-find$/)
+  await page.getByRole('button', { name: 'Go to NGC2: The Connected Battlefield' }).click()
   await expect(page.getByRole('heading', heading(/connected/i))).toBeVisible()
   await page.keyboard.press('Space')
   await expect(page).toHaveURL(/#scene-1.3$/)
@@ -60,15 +62,30 @@ test('opens evidence and presenter tools and leaves the final screen intact duri
   await expect(page).toHaveURL(/#scene-reflection$/)
 })
 
-test('walks the educational examples and loads the original research figures', async ({ page }) => {
+test('presents all six stages as scenes with their own photographs', async ({ page }) => {
   await page.goto('./#scene-1.1')
-  await page.getByRole('button', { name: 'Walk the six stages' }).click()
+  await page.getByRole('button', { name: 'Begin the six stages' }).click()
+  const stage = page.getByRole('main')
+  const image = stage.getByRole('img')
+  for (const name of ['find', 'fix', 'track', 'target', 'engage', 'assess']) {
+    await expect(page).toHaveURL(new RegExp(`#scene-1\\.1-${name}$`))
+    await expect(stage.getByRole('heading', heading(new RegExp(`^${name}\\b`, 'i')))).toBeVisible()
+    await expect(stage.getByText('Base A')).toBeVisible()
+    await expect(stage.getByText('Base B')).toBeVisible()
+    await expect(image).toHaveAttribute('src', new RegExp(`chain-${name}\\.webp$`))
+    await expect.poll(() => image.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0)
+    await expect(page.getByRole('dialog')).toHaveCount(0)
+    await page.keyboard.press('ArrowRight')
+  }
+  await expect(page).toHaveURL(/#scene-1.2$/)
+  await page.keyboard.press('ArrowLeft')
+  await expect(page).toHaveURL(/#scene-1.1-assess$/)
+  await page.reload()
+  await expect(stage.getByRole('heading', heading(/^assess/i))).toBeVisible()
+})
+
+test('walks the educational examples and loads the original research figures', async ({ page }) => {
   const panel = page.getByRole('dialog')
-  await panel.getByRole('button', { name: 'Next stage' }).click()
-  await expect(panel.getByRole('heading', { name: 'Fix', exact: true })).toHaveCount(2)
-  await panel.getByRole('button', { name: 'Assess', exact: true }).click()
-  await panel.getByRole('button', { name: 'Restart stages' }).click()
-  await expect(panel.getByRole('heading', { name: 'Find', exact: true })).toHaveCount(2)
   await page.goto('./#scene-1.2')
   await page.getByRole('button', { name: 'Explore the four layers' }).click()
   await panel.getByRole('button', { name: 'Transport', exact: true }).click()

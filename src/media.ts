@@ -12,6 +12,54 @@ type Media = {
 }
 
 export const media = {
+  'chain-find': {
+    title: 'Weather observation at Rickenbacker Air National Guard Base',
+    alt: 'An Air National Guard weather specialist takes an outdoor measurement',
+    publisher: 'DVIDS', credit: 'Ivy Thomas / U.S. Air National Guard', date: 'March 2024',
+    source: 'https://www.dvidshub.net/image/8277847/manual-weather-observation',
+    rights: 'U.S. public domain · resized WebP',
+    note: 'An example of collecting an observation.',
+  },
+  'chain-fix': {
+    title: 'Command post software evaluation, Fort Bliss',
+    alt: 'People at a command post software evaluation with screens in front of them',
+    publisher: 'U.S. Army via Wikimedia Commons', credit: 'Devon Bistarkey / U.S. Army', date: 'November 2015',
+    source: 'https://commons.wikimedia.org/wiki/File:Army_Command_Post_Computing_Environment_readies_for_NIE_16_photo_by_Devon_Bistarkey_released_to_Public_Domain.png',
+    rights: 'U.S. public domain · resized WebP',
+    note: 'An example of reviewing information together.',
+  },
+  'chain-track': {
+    title: 'Tracking simulated casualties at Ivy Sting 4',
+    alt: 'A soldier checks a device during a simulated casualty exercise',
+    publisher: 'U.S. Army', credit: 'Pfc. Jacob Cruz / U.S. Army', date: 'February 2026',
+    source: 'https://www.army.mil/article/291655/army_launches_data_operations_center_to_give_warfighters_the_decisive_edge',
+    rights: 'U.S. Army photograph · resized WebP',
+    note: 'The exercise used updates to coordinate care for simulated casualties.',
+  },
+  'chain-target': {
+    title: 'Command post exercise briefing in Poland',
+    alt: 'A U.S. Army officer briefs Polish military observers during an exercise',
+    publisher: 'U.S. Army', credit: 'Capt. Christopher Buys / U.S. Army', date: 'February 2023',
+    source: 'https://www.army.mil/article/264537/black_jack_completes_command_post_exercise_with_polish_observers',
+    rights: 'U.S. Army photograph · resized WebP',
+    note: 'A training briefing illustrates the role of human judgment.',
+  },
+  'chain-engage': {
+    title: 'Simulated casualty care at Fort McCoy',
+    alt: 'Soldiers take part in a casualty care exercise at Fort McCoy',
+    publisher: 'U.S. Army', credit: 'Sgt. 1st Class Justin Hardin / U.S. Army', date: 'July 2024',
+    source: 'https://www.army.mil/article/278845/observe_control_train_and_improve',
+    rights: 'U.S. Army photograph · resized WebP',
+    note: 'A training response illustrates the move from decision to action.',
+  },
+  'chain-assess': {
+    title: 'After-action review at Fort Drum',
+    alt: 'An Army sergeant leads a discussion with soldiers after an exercise',
+    publisher: 'U.S. Army', credit: 'Pfc. Josue Patricio / U.S. Army', date: 'August 2020',
+    source: 'https://www.army.mil/article/238869/golden_dragons_complete_squad_level_training_exercise',
+    rights: 'U.S. Army photograph · resized WebP',
+    note: 'The team reviews what happened during training.',
+  },
   'command-post': {
     title: 'Command Post Computing Environment',
     alt: 'Two soldiers silhouetted against wall-sized command post displays',

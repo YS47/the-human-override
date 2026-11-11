@@ -169,7 +169,7 @@ function Visuals({ gallery }: { gallery: MediaId[] }) {
   )
 }
 
-function Stage({ scene, heading, open }: { scene: Scene, heading: React.RefObject<HTMLHeadingElement | null>, open: (overlay: Overlay) => void }) {
+function Stage({ scene, heading, open, advance }: { scene: Scene, heading: React.RefObject<HTMLHeadingElement | null>, open: (overlay: Overlay) => void, advance: () => void }) {
   const phase = phases[scene.phase]
   const [mediaFailed, setMediaFailed] = useState(false)
   const visual = mediaFailed ? undefined : scene.visual
@@ -186,13 +186,18 @@ function Stage({ scene, heading, open }: { scene: Scene, heading: React.RefObjec
   }
 
   return (
-    <main className="stage stage-with-evidence" id="presentation">
+    <main className={`stage stage-with-evidence ${scene.comparison ? 'comparison-stage' : ''}`} id="presentation">
       <div className="stage-copy">
-        <p className="eyebrow scene-overline"><span>{scene.id}</span>{scene.id === '1.2' ? 'NGC2' : phase.title}</p>
+        <p className="eyebrow scene-overline"><span>{scene.comparison ? `${twoDigits(scene.comparison.stage)} / 06` : scene.id}</span>{scene.comparison ? 'Fictional classroom comparison' : scene.id === '1.2' ? 'NGC2' : phase.title}</p>
         <h1 ref={heading} tabIndex={-1}>{scene.lines.map((line, index) => <span key={line} className={index ? 'title-accent' : undefined}>{line}</span>)}</h1>
         <p className="deck">{scene.deck}</p>
+        {scene.comparison && <dl className="comparison">
+          <div><dt>Base A <span>AI assistance</span></dt><dd>{scene.comparison.baseA}</dd></div>
+          <div><dt>Base B <span>Human-led review</span></dt><dd>{scene.comparison.baseB}</dd></div>
+        </dl>}
         <div className="stage-actions">
-          <button className="button primary" onClick={() => open('explore')}>{scene.explore} <Icon name="right" /></button>
+          {scene.id === '1.1' && <button className="button primary" onClick={advance}>Begin the six stages <Icon name="right" /></button>}
+          {scene.explore && <button className="button primary" onClick={() => open('explore')}>{scene.explore} <Icon name="right" /></button>}
           <button className="button quiet" onClick={() => open('evidence')}><Icon name="source" /> Evidence</button>
           {scene.gallery && <button className="button quiet" onClick={() => open('visuals')}><Icon name="image" /> {scene.id === '1.1' ? 'Video stills' : 'Visuals'}</button>}
         </div>
@@ -233,6 +238,7 @@ function App() {
   const focusScene = useRef(false)
   const sceneTransition = useRef<ViewTransition | null>(null)
   const scene = scenes[Math.max(0, index)]
+  const chapterIndex = scene.comparison ? index - scene.comparison.stage : index
   const phase = phases[scene.phase]
 
   useEffect(() => {
@@ -344,7 +350,7 @@ function App() {
         </div>
       </header>
 
-      <Stage key={scene.id} scene={scene} heading={heading} open={setOverlay} />
+      <Stage key={scene.id} scene={scene} heading={heading} open={setOverlay} advance={() => goTo(indexFromHash() + 1)} />
 
       <footer className="footer">
         <div className="timeline">
@@ -352,8 +358,8 @@ function App() {
             <div className={`phase-track ${scene.phase === phaseIndex ? 'active-phase' : ''}`} key={item.id}>
               <span className="phase-label"><b>{item.numeral}</b> {item.mood}</span>
               <div className="segments" role="group" aria-label={item.title}>
-                {scenes.map((entry, i) => entry.phase === phaseIndex && (
-                  <button className={i <= index ? 'reached' : ''} key={entry.id} title={entry.title} aria-label={`Go to ${entry.title}`} aria-current={i === index ? 'step' : undefined} onClick={() => goTo(i)} />
+                {scenes.map((entry, i) => entry.phase === phaseIndex && !entry.comparison && (
+                  <button className={i <= chapterIndex ? 'reached' : ''} key={entry.id} title={entry.title} aria-label={`Go to ${entry.title}`} aria-current={i === chapterIndex ? 'step' : undefined} onClick={() => goTo(i)} />
                 ))}
               </div>
             </div>

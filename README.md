@@ -1,6 +1,6 @@
 # The Human Override
 
-A 37:45 university presentation on AI-assisted command, autonomous weapons, research on unsafe agent behavior, and human responsibility. The deck has nine scenes, a final reflection, and an optional ten-question audience discussion.
+A 37:45 university presentation on AI-assisted command, autonomous weapons, research on unsafe agent behavior, and human responsibility. The deck includes six illustrated scenes for the Base A and Base B comparison, a final reflection, and an optional ten-question audience discussion.
 
 ## Run it
 

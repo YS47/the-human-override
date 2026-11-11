@@ -2,15 +2,6 @@ import { useState, type ReactNode } from 'react'
 import { evidence } from './evidence'
 import { figures, interview, mediaPath } from './media'
 
-const chain = [
-  ['Find', 'An analyst receives a report that may be relevant.', 'Software can flag a report for review.'],
-  ['Fix', 'A second reviewer checks what the report actually establishes.', 'The interface can surface conflicting records side by side.'],
-  ['Track', 'People compare updates and mark gaps in the record.', 'Updates can be grouped by time, with gaps still visible.'],
-  ['Target', 'A human decision-maker considers the proposed action and its constraints.', 'The decision-maker can review a machine recommendation and its provenance.'],
-  ['Engage', 'Any authorized action remains subject to the applicable rules and human responsibility.', 'Decision support leaves authority and responsibility with people in this example.'],
-  ['Assess', 'People compare what happened with what they intended.', 'Software can summarize observations for people to verify.'],
-]
-
 const layers = [
   ['Applications', 'The interfaces people use to view, share and work with information.'],
   ['Data', 'Common ways to exchange, integrate and interpret records from different sources.'],
@@ -58,26 +49,6 @@ function Steps({ entries, label }: { entries: string[][], label: string }) {
       <div className="detail-card" aria-live="polite">
         <h3>{entries[step][0]}</h3>
         <p>{entries[step][1]}</p>
-      </div>
-    </>
-  )
-}
-
-function Battlefield() {
-  const [stage, setStage] = useState(0)
-  const [name, baseB, baseA] = chain[stage]
-  return (
-    <>
-      <p className="eyebrow">Fictional classroom comparison · F2T2EA</p>
-      <Choices labels={chain.map(([label]) => label)} value={stage} onChange={setStage} label="Six doctrine stages" />
-      <div className="detail-grid" aria-live="polite">
-        <div className="detail-card"><span className="eyebrow">Base A · AI assistance</span><h3>{name}</h3><p>{baseA}</p></div>
-        <div className="detail-card"><span className="eyebrow">Base B · human-led review</span><h3>{name}</h3><p>{baseB}</p></div>
-      </div>
-      <div className="step-actions">
-        <button className="button" disabled={stage === 0} onClick={() => setStage(stage - 1)}>Previous stage</button>
-        <span className="mono">{stage + 1} / {chain.length}</span>
-        <button className="button primary" onClick={() => setStage((stage + 1) % chain.length)}>{stage === chain.length - 1 ? 'Restart stages' : 'Next stage'}</button>
       </div>
     </>
   )
@@ -292,7 +263,6 @@ function Futures() {
 
 export function Explainer({ scene }: { scene: string }) {
   switch (scene) {
-    case '1.1': return <Battlefield />
     case '1.2': return <Architecture />
     case '1.3': return <Limits />
     case '2.1': return <Lens names={['Decision authority', 'Object detection']}><Steps entries={autonomy} label="Degrees of autonomy" /><Detector /></Lens>

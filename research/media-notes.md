@@ -7,6 +7,12 @@ The preparation archive supplies five Robocurve screenshots and a list of candid
 | Scene | Local asset | Subject and role |
 | --- | --- | --- |
 | 1.1 | `command-post.webp` | Historical Army command post. The Base A/Base B comparison is fictional. |
+| Find | `chain-find.webp` | An Air National Guard weather specialist gathers an observation. |
+| Fix | `chain-fix.webp` | A command post software evaluation at Fort Bliss illustrates review. |
+| Track | `chain-track.webp` | Soldiers use a device to follow simulated casualty reports at Ivy Sting 4. |
+| Target | `chain-target.webp` | A training briefing in Poland illustrates human judgment. |
+| Engage | `chain-engage.webp` | Simulated casualty care at Fort McCoy illustrates a training response. |
+| Assess | `chain-assess.webp` | An after-action review at Fort Drum illustrates learning from an exercise. |
 | 1.2 | `ngc2.webp` | Staff Sgt. Victor Corena at the NGC2 field exercise described in the Army caption. |
 | 1.3 | `communications.webp` | Satellite equipment from Freedom Shield. Field-test conditions and GAO’s schedule and cost finding have separate citations. |
 | 2.1 | `drone.webp` | Unmanned aircraft at African Lion 26. The Zaporizhzhia strike is covered by the separately cited Times investigation. |
