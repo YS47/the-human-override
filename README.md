@@ -11,7 +11,7 @@ npm ci
 npm run dev
 ```
 
-Open the URL printed by Vite. The project uses the `/the-human-override/` base path in development and on GitHub Pages. Scene links such as `#scene-3.1` open directly without server routing.
+Open the URL printed by Vite and choose **Begin** or press Space. The project uses the `/the-human-override/` base path in development and on GitHub Pages. Scene links such as `#scene-3.1` open directly without server routing.
 
 | Control | Action |
 | --- | --- |
@@ -21,6 +21,7 @@ Open the URL printed by Vite. The project uses the `/the-human-override/` base p
 | F | Toggle fullscreen where supported |
 | Escape | Close the open panel |
 | Chapters | Jump to a scene, open Q&A, or toggle condensed rehearsal |
+| Inspect image | Open the credited image. Use Left and Right to switch images, and Enlarge image for small details. |
 
 Notes and timers appear on the same screen as the presentation. Use them while rehearsing or between projected scenes. The web version and its bundled presenter notes are public. The audience deck, diagrams, photos, fonts and research figures are served by GitHub Pages. The interview player and source links use external websites.
 

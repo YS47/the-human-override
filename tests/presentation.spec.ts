@@ -4,6 +4,9 @@ const heading = (title: RegExp) => ({ name: title, level: 1 })
 
 test('moves forward and backward with a presenter remote and chapter links', async ({ page }) => {
   await page.goto('./')
+  await expect(page.getByRole('heading', heading(/the human override/i))).toBeVisible()
+  await expect(page.getByRole('button', { name: /begin/i })).toBeVisible()
+  await page.keyboard.press('Space')
   await expect(page.getByRole('heading', heading(/two armies/i))).toBeVisible()
   await page.keyboard.press('ArrowRight')
   await expect(page.getByRole('heading', heading(/connected/i))).toBeVisible()
@@ -58,7 +61,7 @@ test('opens evidence and presenter tools and leaves the final screen intact duri
 })
 
 test('walks the educational examples and loads the original research figures', async ({ page }) => {
-  await page.goto('./')
+  await page.goto('./#scene-1.1')
   await page.getByRole('button', { name: 'Walk the six stages' }).click()
   const panel = page.getByRole('dialog')
   await panel.getByRole('button', { name: 'Next stage' }).click()
@@ -114,6 +117,14 @@ test('shows the supplied video stills and book cover with source captions', asyn
   await expect(panel.getByText(/six-stage model.*includes Track/)).toBeVisible()
   await page.keyboard.press('Escape')
   await expect(page.getByRole('button', { name: 'Video stills', exact: true })).toBeFocused()
+  await page.getByRole('button', { name: 'Inspect image', exact: true }).click()
+  await expect(image).toHaveAttribute('src', /command-post\.webp$/)
+  await page.keyboard.press('ArrowRight')
+  await expect(image).toHaveAttribute('src', /war-title\.png$/)
+  await panel.getByRole('button', { name: 'Enlarge image' }).click()
+  await expect(panel.getByRole('button', { name: 'Fit image' })).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(page).toHaveURL(/#scene-1.1$/)
 
   await page.goto('./#scene-3.3')
   const book = page.getByRole('img', { name: /cover of If Anyone Builds It/ })
@@ -127,7 +138,7 @@ test('shows the supplied video stills and book cover with source captions', asyn
 
 test('fits a narrow screen, loads local photos and applies the four approved backgrounds', async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 800 })
-  await page.goto('./')
+  await page.goto('./#scene-1.1')
   const backgrounds = ['#1F252B', '#1F252B', '#1F252B', '#1A0E10', '#1A0E10', '#1A0E10', '#0A0A0D', '#0A0A0D', '#0A0A0D', '#E9DCC9']
   const photoScenes = new Set([0, 1, 2, 3, 5, 8])
   const segments = page.locator('.segments button')

@@ -1,5 +1,6 @@
 import { StrictMode, useEffect, useRef, useState, type ReactNode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { flushSync } from 'react-dom'
 import '@fontsource/barlow-condensed/latin-600.css'
 import '@fontsource/barlow-condensed/latin-700.css'
 import '@fontsource-variable/geist'
@@ -12,7 +13,7 @@ import { mediaDetails, mediaImage, type MediaId } from './media'
 import { Explainer, TrialChart } from './Explainers'
 import './style.css'
 
-type Overlay = 'chapters' | 'notes' | 'evidence' | 'explore' | 'discussion' | 'visuals'
+type Overlay = 'chapters' | 'notes' | 'evidence' | 'explore' | 'discussion' | 'visuals' | 'inspect'
 type IconName = 'grid' | 'notes' | 'expand' | 'shrink' | 'left' | 'right' | 'external' | 'close' | 'source' | 'image'
 
 const icons: Record<IconName, ReactNode> = {
@@ -41,6 +42,7 @@ const timeLabel = (seconds: number) => `${Math.floor(seconds / 60)}:${String(sec
 const twoDigits = (value: number) => String(value).padStart(2, '0')
 
 function indexFromHash() {
+  if (!location.hash) return -1
   const id = location.hash.replace(/^#scene-/, '')
   return Math.max(0, scenes.findIndex(scene => scene.id === id))
 }
@@ -115,11 +117,11 @@ function EvidenceVisual({ scene }: { scene: Scene }) {
   )
 }
 
-function MediaCaption({ id }: { id: MediaId }) {
+function MediaCaption({ id, inspect }: { id: MediaId, inspect?: () => void }) {
   const image = mediaDetails(id)
   return (
     <figcaption className="media-caption">
-      <span className="eyebrow">{image.kind ?? 'Documentary photograph'}</span>
+      <div className="caption-heading"><span className="eyebrow">{image.kind ?? 'Documentary photograph'}</span>{inspect && <button className="button quiet" onClick={inspect}><Icon name="expand" /> Inspect image</button>}</div>
       <a href={image.source} target="_blank" rel="noreferrer">{image.title} <Icon name="external" /></a>
       <small>{[image.credit, image.date].filter(Boolean).join(' · ')}</small>
       {image.note && <p>{image.note}</p>}
@@ -128,14 +130,39 @@ function MediaCaption({ id }: { id: MediaId }) {
 }
 
 function Visuals({ gallery }: { gallery: MediaId[] }) {
-  const [selected, setSelected] = useState(gallery[0])
+  const [index, setIndex] = useState(0)
+  const [zoom, setZoom] = useState(false)
+  const selected = gallery[index]
+
+  function show(next: number) {
+    setIndex(next)
+    setZoom(false)
+  }
+
+  useEffect(() => {
+    function onKey(event: KeyboardEvent) {
+      if (event.defaultPrevented || event.altKey || event.metaKey || event.ctrlKey) return
+      if (event.target instanceof HTMLElement && event.target.closest('.zoomed')) return
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+        event.preventDefault()
+        const next = index + (event.key === 'ArrowLeft' ? -1 : 1)
+        if (next >= 0 && next < gallery.length) show(next)
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [index, gallery.length])
+
   return (
     <>
       <div className="choices" role="group" aria-label="Choose an image">
-        {gallery.map(id => <button key={id} aria-pressed={id === selected} onClick={() => setSelected(id)}>{mediaDetails(id).kind}</button>)}
+        {gallery.length > 1 && gallery.map((id, position) => <button key={id} aria-pressed={id === selected} onClick={() => show(position)}>{mediaDetails(id).kind ?? 'Documentary photograph'}</button>)}
+        <button aria-pressed={zoom} onClick={() => setZoom(!zoom)}>{zoom ? 'Fit image' : 'Enlarge image'}</button>
       </div>
       <figure className="framed-media gallery-media">
-        <img src={mediaImage(selected)} alt={mediaDetails(selected).alt} />
+        <div className={zoom ? 'image-viewport zoomed' : 'image-viewport'} tabIndex={zoom ? 0 : undefined} aria-label={zoom ? 'Enlarged image, scroll to inspect' : undefined}>
+          <img src={mediaImage(selected)} alt={mediaDetails(selected).alt} />
+        </div>
         <MediaCaption id={selected} />
       </figure>
     </>
@@ -146,7 +173,6 @@ function Stage({ scene, heading, open }: { scene: Scene, heading: React.RefObjec
   const phase = phases[scene.phase]
   const [mediaFailed, setMediaFailed] = useState(false)
   const visual = mediaFailed ? undefined : scene.visual
-  const fullBleed = visual && visual !== 'book-cover'
 
   if (scene.phase === 3) {
     return (
@@ -160,14 +186,7 @@ function Stage({ scene, heading, open }: { scene: Scene, heading: React.RefObjec
   }
 
   return (
-    <main className={`stage ${fullBleed ? 'stage-with-photo' : 'stage-with-evidence'}`} id="presentation">
-      {fullBleed && (
-        <figure className="hero-media" data-photo={visual}>
-          <img src={mediaImage(visual)} alt={mediaDetails(visual).alt} onError={() => setMediaFailed(true)} />
-          <div className="media-wash" aria-hidden="true" />
-          <MediaCaption id={visual} />
-        </figure>
-      )}
+    <main className="stage stage-with-evidence" id="presentation">
       <div className="stage-copy">
         <p className="eyebrow scene-overline"><span>{scene.id}</span>{scene.id === '1.2' ? 'NGC2' : phase.title}</p>
         <h1 ref={heading} tabIndex={-1}>{scene.lines.map((line, index) => <span key={line} className={index ? 'title-accent' : undefined}>{line}</span>)}</h1>
@@ -178,10 +197,25 @@ function Stage({ scene, heading, open }: { scene: Scene, heading: React.RefObjec
           {scene.gallery && <button className="button quiet" onClick={() => open('visuals')}><Icon name="image" /> {scene.id === '1.1' ? 'Video stills' : 'Visuals'}</button>}
         </div>
       </div>
-      {!fullBleed && <aside className="stage-evidence" aria-label="Featured evidence">
-        {visual ? <figure className="framed-media book-media"><img src={mediaImage(visual)} alt={mediaDetails(visual).alt} onError={() => setMediaFailed(true)} /><MediaCaption id={visual} /></figure>
+      <aside className="stage-evidence" aria-label="Featured evidence">
+        {visual ? <figure className={`framed-media scene-media ${visual === 'book-cover' ? 'book-media' : ''}`}><img src={mediaImage(visual)} alt={mediaDetails(visual).alt} onError={() => setMediaFailed(true)} /><MediaCaption id={visual} inspect={() => open('inspect')} /></figure>
           : <EvidenceVisual scene={scene} />}
-      </aside>}
+      </aside>
+    </main>
+  )
+}
+
+function Opening({ heading, begin, fullscreen, isFullscreen }: { heading: React.RefObject<HTMLHeadingElement | null>, begin: () => void, fullscreen: () => void, isFullscreen: boolean }) {
+  return (
+    <main className="stage opening" id="presentation">
+      <div className="opening-copy">
+        <p className="eyebrow">AI, warfare & human control</p>
+        <h1 tabIndex={-1} ref={heading}>The Human <em>Override</em></h1>
+        <p className="deck">Who decides when machines can act?</p>
+        <button className="begin-button" onClick={begin}><span>Begin</span><span className="begin-hint"><kbd>Space</kbd> <Icon name="right" /></span></button>
+      </div>
+      <div className="opening-image" aria-hidden="true"><img src={mediaImage('command-post')} alt="" /></div>
+      <button className="button quiet opening-fullscreen" onClick={fullscreen}><Icon name={isFullscreen ? 'shrink' : 'expand'} /> {isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}</button>
     </main>
   )
 }
@@ -197,15 +231,29 @@ function App() {
   const dialog = useRef<HTMLDialogElement>(null)
   const heading = useRef<HTMLHeadingElement>(null)
   const focusScene = useRef(false)
-  const scene = scenes[index]
+  const sceneTransition = useRef<ViewTransition | null>(null)
+  const scene = scenes[Math.max(0, index)]
   const phase = phases[scene.phase]
 
   useEffect(() => {
     function onHashChange() {
-      focusScene.current = true
-      setIndex(indexFromHash())
-      setEnteredAt(Date.now())
-      setOverlay(null)
+      function updateScene() {
+        focusScene.current = true
+        setIndex(indexFromHash())
+        setEnteredAt(Date.now())
+        setOverlay(null)
+      }
+      sceneTransition.current?.skipTransition()
+      if (document.startViewTransition && !dialog.current?.open && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const transition = document.startViewTransition(() => flushSync(updateScene))
+        sceneTransition.current = transition
+        void transition.ready.catch(() => {})
+        void transition.finished.then(() => {
+          if (sceneTransition.current === transition) sceneTransition.current = null
+        })
+      } else {
+        updateScene()
+      }
     }
     function onFullscreenChange() { setFullscreen(Boolean(document.fullscreenElement)) }
     window.addEventListener('hashchange', onHashChange)
@@ -232,13 +280,15 @@ function App() {
   useEffect(() => {
     const theme = ['#1F252B', '#1A0E10', '#0A0A0D', '#E9DCC9'][scene.phase]
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme)
-    document.title = `${scene.title} · The Human Override`
-  }, [scene])
+    document.title = index < 0 ? 'The Human Override' : `${scene.title} · The Human Override`
+  }, [index, scene])
 
   function goTo(next: number) {
     const destination = Math.min(last, Math.max(0, next))
     setOverlay(null)
-    if (destination === indexFromHash()) return
+    const current = indexFromHash()
+    if (destination === current) return
+    if (current < 0) setStartedAt(Date.now())
     location.hash = `scene-${scenes[destination].id}`
   }
 
@@ -254,7 +304,7 @@ function App() {
 
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
-      if (overlay || event.ctrlKey || event.metaKey || event.altKey || event.defaultPrevented) return
+      if (overlay || event.repeat || event.ctrlKey || event.metaKey || event.altKey || event.defaultPrevented) return
       if (event.target instanceof HTMLElement) {
         if (event.target.closest('input, textarea, select, [contenteditable], iframe')) return
         if (event.key === ' ' && event.target.closest('button, a')) return
@@ -263,11 +313,11 @@ function App() {
         event.preventDefault()
         goTo(indexFromHash() + 1)
       }
-      if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(event.key)) {
+      if (indexFromHash() >= 0 && ['ArrowLeft', 'ArrowUp', 'PageUp'].includes(event.key)) {
         event.preventDefault()
         goTo(indexFromHash() - 1)
       }
-      if (event.key.toLowerCase() === 'n') setOverlay('notes')
+      if (indexFromHash() >= 0 && event.key.toLowerCase() === 'n') setOverlay('notes')
       if (event.key.toLowerCase() === 'f') void toggleFullscreen()
     }
     window.addEventListener('keydown', onKey)
@@ -277,10 +327,13 @@ function App() {
   const titles: Record<Overlay, string> = {
     chapters: 'Chapters', notes: scene.title, evidence: 'Sources and evidence',
     explore: scene.explore ?? scene.title, discussion: 'Audience Q&A', visuals: scene.id === '1.1' ? 'Video stills' : 'Scene visuals',
+    inspect: 'Inspect image',
   }
+  const sceneImages = [...new Set([scene.visual, ...(scene.gallery ?? [])])].filter((id): id is MediaId => id !== undefined)
 
   return (
-    <div className={`presentation theme-${phase.id}`}>
+    <div className={`presentation theme-${phase.id} ${index < 0 ? 'presentation-opening' : ''}`}>
+      {index < 0 ? <Opening heading={heading} begin={() => goTo(0)} fullscreen={() => void toggleFullscreen()} isFullscreen={fullscreen} /> : <>
       <header className="topbar">
         <Brand />
         <span className="topbar-center">AI, warfare & human control</span>
@@ -292,7 +345,6 @@ function App() {
       </header>
 
       <Stage key={scene.id} scene={scene} heading={heading} open={setOverlay} />
-      {notice && <div className="notice" role="status"><span>{notice}</span><button className="button quiet" onClick={() => setNotice('')}>Dismiss</button></div>}
 
       <footer className="footer">
         <div className="timeline">
@@ -308,11 +360,13 @@ function App() {
           ))}
         </div>
         <div className="footer-controls">
-          <p className="scene-count" aria-live="polite"><strong>{twoDigits(index + 1)}</strong><span> / {twoDigits(scenes.length)}</span></p>
           <button className="button arrow" aria-label="Previous scene" disabled={index === 0} onClick={() => goTo(indexFromHash() - 1)}><Icon name="left" /></button>
-          <button className="button next" aria-label="Next scene" disabled={index === last} onClick={() => goTo(indexFromHash() + 1)}><span>Next scene</span><Icon name="right" /></button>
+          <button className="button scene-count" aria-label="Open scene navigator" onClick={() => setOverlay('chapters')}><span>{scene.title}</span><span className="mono">{twoDigits(index + 1)} / {twoDigits(scenes.length)}</span></button>
+          <button className="button arrow" aria-label="Next scene" disabled={index === last} onClick={() => goTo(indexFromHash() + 1)}><Icon name="right" /></button>
         </div>
       </footer>
+      </>}
+      {notice && <div className="notice" role="status"><span>{notice}</span><button className="button quiet" onClick={() => setNotice('')}>Dismiss</button></div>}
 
       <dialog ref={dialog} className="panel" aria-labelledby="overlay-title" onCancel={event => { event.preventDefault(); setOverlay(null) }} onClick={event => { if (event.target === event.currentTarget) setOverlay(null) }}>
         {overlay && <div className="panel-inner" key={overlay}>
@@ -334,6 +388,7 @@ function App() {
             {overlay === 'notes' && <PresenterNotes scene={scene} enteredAt={enteredAt} startedAt={startedAt} rehearsal={rehearsal} />}
             {overlay === 'evidence' && <EvidencePanel scene={scene} />}
             {overlay === 'visuals' && scene.gallery && <Visuals gallery={scene.gallery} />}
+            {overlay === 'inspect' && <Visuals gallery={sceneImages} />}
             {overlay === 'explore' && <Explainer scene={scene.id} />}
             {overlay === 'discussion' && <><button className="button" onClick={() => setOverlay('chapters')}><Icon name="left" /> Chapters</button><ol className="discussion">{discussion.map(question => <li key={question}>{question}</li>)}</ol></>}
           </div>
