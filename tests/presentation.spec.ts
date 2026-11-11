@@ -79,7 +79,7 @@ test('navigator jumps to any scene and the chapter rail returns to earlier chapt
   await expect(stage(page)).toBeFocused()
   await page.keyboard.press('g')
   const dialog = page.getByRole('dialog', { name: 'Scene navigator' })
-  await expect(dialog.getByRole('button')).toHaveCount(50)
+  await expect(dialog.getByRole('button')).toHaveCount(51)
   await dialog.getByRole('button', { name: /23 The Lavender investigation/ }).click()
   await at(page, 23, 1)
   await page.getByRole('navigation', { name: 'Chapters' }).getByRole('button', { name: 'Two armies, one battlefield' }).click()
@@ -97,7 +97,7 @@ test('deep links restore individual beats and legacy aliases', async ({ page }) 
   await at(page, 3, 1)
   await expect(stage(page).getByRole('heading')).toHaveText('Find')
   await page.goto('./#scene-reflection')
-  await at(page, 49, 1)
+  await at(page, 50, 1)
   await expect(page.getByRole('button', { name: 'Next beat' })).toBeDisabled()
 })
 
@@ -234,17 +234,23 @@ test('a missing reel shows the credited frame and the presenter can advance', as
 })
 
 test('the conflict comparison and explanatory charts preserve their labels and counts', async ({ page }) => {
+  await page.goto('./#scene-03.2')
+  await expect(stage(page).getByText('Software flags a report')).toBeVisible()
+  await expect(stage(page)).not.toContainText(/\bBase [AB]\b/)
   await page.goto('./#scene-04.2')
   await at(page, 4, 2)
   await next(page)
   await at(page, 4, 3)
   await expect(stage(page).getByRole('heading', { level: 1 })).toHaveText('What happens when the records conflict?')
-  for (const name of ['Base B human review', 'Base A interface']) {
+  for (const name of ['Manual review', 'Side-by-side view']) {
     const panel = stage(page).getByRole('region', { name })
     await expect(panel.getByRole('listitem')).toHaveCount(2)
     await expect(panel.getByText('Wind from north')).toBeVisible()
     await expect(panel.getByText('Wind from south')).toBeVisible()
   }
+  await expect(stage(page)).not.toContainText(/\bBase [AB]\b/)
+  await page.goto('./#scene-09.1')
+  await expect(stage(page).getByText('Base A · AI assistance')).toBeVisible()
   await page.goto('./#scene-25.1')
   await expect(stage(page).locator('.alert-grid span')).toHaveCount(59)
   await next(page)
@@ -254,12 +260,50 @@ test('the conflict comparison and explanatory charts preserve their labels and c
   await expect(stage(page).getByText('Result returns to the model')).toBeVisible()
 })
 
+test('transport labels fit their cards at desktop and phone widths', async ({ page }) => {
+  await page.goto('./#scene-11.1')
+  const nodes = stage(page).locator('.transport-map .map-node')
+  await expect(nodes).toHaveCount(4)
+  await page.evaluate(() => document.fonts.ready.then(() => true))
+  for (const [width, height] of [[1905, 898], [360, 800]]) {
+    await page.setViewportSize({ width, height })
+    const overflow = await nodes.evaluateAll(cards => cards.flatMap(card => {
+      const bounds = card.getBoundingClientRect()
+      const style = getComputedStyle(card)
+      const text = document.createRange()
+      text.selectNodeContents(card)
+      const inside = Array.from(text.getClientRects()).every(line =>
+        line.left >= bounds.left + parseFloat(style.paddingLeft) - 2 &&
+        line.right <= bounds.right - parseFloat(style.paddingRight) + 2)
+      return inside ? [] : [card.textContent]
+    }))
+    expect(overflow, `at ${width}px`).toEqual([])
+  }
+})
+
+test('the Sable sequence moves from training to Galvanic’s decision', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 })
+  await page.goto('./#scene-38.2')
+  await expect(stage(page).getByRole('heading')).toHaveText('Galvanic builds Sable.')
+  await next(page)
+  await expect(page).toHaveURL(/#scene-sable-assumption\.1$/)
+  await expect(stage(page).getByText('Solve math problems')).toBeVisible()
+  await expect(stage(page).getByText('Seek knowledge and skill')).toBeVisible()
+  await next(page)
+  await expect(page).toHaveURL(/#scene-sable-warning\.1$/)
+  await expect(stage(page).getByText('Warning signs appear')).toBeVisible()
+  const rowOffsets = await stage(page).locator('.path-node').evaluateAll(cards => cards.map(card => card.getBoundingClientRect().top))
+  expect(new Set(rowOffsets).size).toBe(1)
+  await next(page)
+  await expect(stage(page).getByRole('heading')).toHaveText('What would have made Galvanic stop?')
+})
+
 test('the ten questions give feedback and a score on one slide', async ({ page }) => {
   await page.goto('./#scene-quiz.1')
   const quiz = stage(page).getByRole('region', { name: 'Ten-question review' })
   await expect(quiz.getByText('Question 1 of 10')).toBeVisible()
   await quiz.getByRole('heading').click()
-  await at(page, 47, 1)
+  await at(page, 48, 1)
   await expect(quiz.getByRole('button', { name: 'Next question' })).toBeDisabled()
   const choices = [0, 0, 2, 1, 0, 2, 1, 1, 2, 1]
   for (const [index, choice] of choices.entries()) {
@@ -272,11 +316,11 @@ test('the ten questions give feedback and a score on one slide', async ({ page }
     await quiz.getByRole('button', { name: index === choices.length - 1 ? 'See score' : 'Next question' }).click()
   }
   await expect(quiz.getByRole('heading')).toHaveText('You got 9 out of 10 correct.')
-  await at(page, 47, 1)
+  await at(page, 48, 1)
   await quiz.getByRole('button', { name: 'Start again' }).click()
   await expect(quiz.getByText('Question 1 of 10')).toBeVisible()
   await next(page)
-  await at(page, 48, 1)
+  await at(page, 49, 1)
 })
 
 test('the complete sequence fits a 16:9 projector and the phase colors are solid', async ({ page }) => {
@@ -296,7 +340,7 @@ test('the complete sequence fits a 16:9 projector and the phase colors are solid
 
 test('assets resolve under the Pages base path on a narrow viewport', async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 800 })
-  for (const link of ['01.2', '04.3', '10.1', 'what-the-display-leaves-out.1', '20.3', '22.1', '29.1', 'camera-comparison.1', 'quiz.1', '42.1']) {
+  for (const link of ['01.2', '04.3', '10.1', '11.1', 'what-the-display-leaves-out.1', '20.3', '22.1', '29.1', 'camera-comparison.1', 'sable-warning.1', 'quiz.1', '42.1']) {
     const hash = '#scene-' + link
     await page.goto('./' + hash)
     const moment = timeline.find(entry => entry.hash === hash)!

@@ -6,19 +6,19 @@ const readings = [
 export function ReportComparison() {
   return <figure className="report-comparison">
     <div className="report-panels">
-      <section className="report-panel" aria-label="Base B human review">
-        <h2>Base B <span>Human review</span></h2>
+      <section className="report-panel" aria-labelledby="manual-review">
+        <h2 id="manual-review">Manual review</h2>
         <ul className="report-records">{readings.map(reading => <li key={reading.source}>
           <span>{reading.source}</span><strong>{reading.value}</strong>
         </li>)}</ul>
         <p>Reviewer spots the mismatch.</p>
       </section>
-      <section className="report-panel" aria-label="Base A interface">
-        <h2>Base A <span>Interface</span></h2>
+      <section className="report-panel" aria-labelledby="side-by-side-view">
+        <h2 id="side-by-side-view">Side-by-side view</h2>
         <ul className="report-records">{readings.map(reading => <li key={reading.source}>
           <span>{reading.source}</span><strong>{reading.value}</strong>
         </li>)}</ul>
-        <p><span className="conflict-mark" aria-hidden="true">!</span> Interface flags the mismatch.</p>
+        <p><span className="conflict-mark" aria-hidden="true">!</span> The mismatch is flagged.</p>
       </section>
     </div>
     <figcaption>Fictional example · Both readings are recorded at 09:00.</figcaption>

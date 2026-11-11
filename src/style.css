@@ -206,16 +206,49 @@ figcaption a:hover { text-decoration: underline; }
 .document-title { max-width: 42ch; font-size: clamp(1.1rem, 1.64vw, 2rem); line-height: 1.33; }
 .document-date { border-top: 1px solid #C8AE8C; padding-top: 1em; font: 500 clamp(.78rem, 1.03vw, 1.1rem) var(--mono); color: #6D5141; display: flex; justify-content: space-between; }
 
-.path-diagram ol { list-style: none; padding: 0; display: flex; justify-content: center; flex-wrap: wrap; gap: clamp(6px, 1.25vw, 24px); }
-.path-diagram li { display: flex; align-items: center; gap: clamp(6px, 1.25vw, 24px); animation: signal-in 470ms var(--ease) both; }
+.path-diagram ol {
+  --path-gap: clamp(24px, 3vw, 54px);
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: var(--path-gap);
+  width: min(100%, 1040px);
+  margin-inline: auto;
+  padding: 0;
+  list-style: none;
+}
+.path-diagram li {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  animation: signal-in 470ms var(--ease) both;
+}
 .path-diagram li:nth-child(2) { animation-delay: 80ms; }
 .path-diagram li:nth-child(3) { animation-delay: 160ms; }
-.path-node { display: inline-block; background: var(--surface); border-bottom: 2px solid var(--accent); box-shadow: 0 9px 15px #0007; padding: .7em .9em; font-size: clamp(1rem, 2vw, 2.35rem); }
-.diagram-arrow { color: var(--signal); font-size: clamp(1rem, 2.3vw, 2.6rem); }
+.path-node {
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  border-bottom: 2px solid var(--accent);
+  box-shadow: 0 9px 15px #0007;
+  padding: .7em .9em;
+  font-size: clamp(1rem, 1.85vw, 2.1rem);
+  text-align: center;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+.diagram-arrow {
+  position: absolute;
+  inset: 50% auto auto calc(var(--path-gap) / -2);
+  transform: translate(-50%, -50%);
+  color: var(--signal);
+  font-size: clamp(1rem, 1.8vw, 2rem);
+}
 .pair-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(8px, 2vw, 38px); }
 .pair-columns span {
   display: grid;
   place-content: center;
+  min-width: 0;
   min-height: clamp(100px, 19vh, 255px);
   padding: .65em;
   border: 1px solid var(--rule);
@@ -223,6 +256,7 @@ figcaption a:hover { text-decoration: underline; }
   box-shadow: inset 0 1px var(--rule), 0 15px 26px -6px #000c;
   font: 400 clamp(1.4rem, 3vw, 4rem)/1.12 var(--serif);
   text-wrap: balance;
+  overflow-wrap: anywhere;
 }
 .pair-columns span:nth-child(2) { border-color: var(--accent); }
 .black-stage .pair-columns span { border-color: var(--rule); }
@@ -445,6 +479,8 @@ figcaption a:hover { text-decoration: underline; }
   .layout-reverse .stage-copy, .layout-reverse .stage-visual { grid-column: auto; grid-row: auto; }
   .layout-archive .stage-copy { padding-left: 12px; }
   .layout-number .stage-visual { border-left: 0; border-top: 1px solid var(--rule); padding: 16px 0 0; }
+  .path-diagram ol { --path-gap: 20px; grid-auto-flow: row; width: min(100%, 360px); }
+  .diagram-arrow { inset: calc(var(--path-gap) / -2) auto auto 50%; transform: translate(-50%, -50%) rotate(90deg); }
   .layout-frame .photo-crop img, .photo-crop img { max-height: 46svh; }
   .document { min-height: 200px; }
   .pair-columns span { min-height: 110px; }

@@ -49,7 +49,7 @@ See [the application manifest](../src/media.ts) for source URLs, original credit
 | `bench-test` | Right-hand physical camera view from the first four seconds of `1794403854952_evolving.ai_reel_20261107151421.mov` | Robocurve footage, Evolving AI edit |
 | `camera-comparison` | First five seconds of `1794403872693_evolving.ai_reel_20261107151421.mp4` | Robocurve figures and footage, Evolving AI edit |
 | `reading-the-simulation` | One sentence cropped from frame 215 | Anthropic study reproduced by Species \\| Documenting AGI |
-| `sable-assumption` | Frame 3144 | Species \\| Documenting AGI commentary on the fictional Sable story |
+| `sable-assumption` | Frame 3144, available in the evidence inspector | Species \| Documenting AGI commentary on the fictional Sable story |
 | `two-endings` | Frame 792 | AI In Context, *We’re Not Ready for Superintelligence* |
 
 The clips are silent H.264 MP4s cropped to the laboratory camera views, with stills from the supplied footage. Captions link to the credited publisher, and the inspector links to the relevant primary research. The source frame directories and archives stay outside the deployment.

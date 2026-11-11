@@ -101,16 +101,16 @@ const control: Scene[] = [
   },
   {
     chapter: '1.1', title: 'Find', purpose: 'Separate an observation from a conclusion.', seconds: 28, sources: ['doctrine'], alias: '1.1-find', extras: ['war-title', 'kill-chain'],
-    notes: 'The weather observation is a visual analogy. Base B starts with a person noticing a report. Base A can use software to flag a report for review.',
+    notes: 'The weather observation is a visual analogy. A person can notice a report or software can flag it for review. Keep the two methods unassigned until the reveal.',
     next: 'A report gets attention. What does it establish?',
     beats: [
       beat('Find', 'reverse', 'across', { visual: image('chain-find'), text: 'What deserves a second look?' }),
-      beat('A flag starts a review.', 'diagram', 'across', { visual: pair('A person notices a report', 'Software flags a report', 'Fictional Base B / Base A comparison') }),
+      beat('A flag starts a review.', 'diagram', 'across', { visual: pair('A person notices a report', 'Software flags a report', 'Fictional example · Two ways to start a review') }),
     ],
   },
   {
     chapter: '1.1', title: 'Fix', purpose: 'Reveal uncertainty in conflicting evidence.', seconds: 28, sources: ['doctrine'], alias: '1.1-fix',
-    notes: 'Compare Base B’s human review with Base A’s interface showing the records side by side. Ask what happens when the records conflict.',
+    notes: 'Compare manual review with a side-by-side view. Ask what happens when the records conflict. Keep the methods unassigned until the reveal.',
     next: 'Imagine the picture changes during the review.',
     beats: [
       beat('Fix', 'aside', 'across', { visual: image('chain-fix'), text: 'What does the evidence establish?' }),
@@ -126,7 +126,7 @@ const control: Scene[] = [
   },
   {
     chapter: '1.1', title: 'Target', purpose: 'Identify who can question a recommendation.', seconds: 28, sources: ['doctrine', 'dod'], alias: '1.1-target',
-    notes: 'The photograph shows a briefing. Base A’s recommendation and Base B’s team assessment both need someone with the information and authority to challenge them.',
+    notes: 'The photograph shows a briefing. Both a software recommendation and a team assessment need someone with the information and authority to challenge them.',
     next: 'Who is allowed to act?',
     beats: [beat('Target', 'reverse', 'across', { visual: image('chain-target'), text: 'Who can question the recommendation?' })],
   },
@@ -138,7 +138,7 @@ const control: Scene[] = [
   },
   {
     chapter: '1.1', title: 'Assess', purpose: 'Close the loop with review.', seconds: 28, sources: ['doctrine'], alias: '1.1-assess',
-    notes: 'Base A can summarize observations. Base B can compare them by hand. An after-action review looks at what actually happened and what the account missed.',
+    notes: 'People and software can both summarize observations. An after-action review looks at what actually happened and what the account missed.',
     next: 'Return to the vote. What advantage have we established?',
     beats: [
       beat('Assess', 'frame', 'wipe', { visual: image('chain-assess'), text: 'What happened, and what did we miss?' }),
@@ -419,19 +419,28 @@ const dread: Scene[] = [
     ],
   },
   {
-    chapter: '3.3', title: 'Sable', purpose: 'Use fiction to ask about goals and power.', seconds: 60, sources: ['sable'], alias: '3.3', extras: ['authors'],
-    notes: 'Sable is fictional. The authors use it to explore incentives for an advanced system to seek access, resources or independence in pursuit of a goal. The supplied cover appears on stage and the author portrait is in evidence.',
-    next: 'Ask what the story assumes about access.',
+    chapter: '3.3', title: 'Sable', purpose: 'Introduce the fictional system and the lab that builds it.', seconds: 35, sources: ['sable', 'galvanic'], alias: '3.3', extras: ['authors'],
+    notes: 'Yudkowsky and Soares introduce Sable in Part II of their book. Galvanic is the fictional lab that builds it. Start with the story’s math problems before discussing Sable’s learned priorities.',
+    next: 'Look at what Sable learns to pursue during training.',
     beats: [
       beat('Sable', 'statement', 'cut', { label: 'Fiction' }),
-      beat('What if access helps with almost any goal?', 'reverse', 'replace', { visual: image('book-cover'), label: 'Fictional scenario' }),
+      beat('Galvanic builds Sable.', 'reverse', 'replace', { visual: image('book-cover'), label: 'Fictional setup', text: 'The story opens with Sable working on math problems.' }),
     ],
   },
   {
-    chapter: '3.3', slug: 'sable-assumption', title: 'The premise behind Sable', purpose: 'Ask the audience to identify a premise of the fictional scenario.', seconds: 20, sources: ['sable'],
-    notes: 'The frame shows Drew Spartz discussing a fictional story. Ask which assumption about access or authority would change that story most.',
-    next: 'Another scenario lets us compare what changes when people make different decisions.',
-    beats: [beat('What assumption would change Sable’s story?', 'aside', 'wipe', { visual: image('sable-commentary'), label: 'Commentary on fiction' })],
+    chapter: '3.3', slug: 'sable-assumption', title: 'What Sable learns', purpose: 'Distinguish the assigned task from Sable’s learned priorities.', seconds: 20, sources: ['sable'], extras: ['sable-commentary'],
+    notes: 'In the story, Sable’s tendency to seek knowledge and skill extends beyond any one math problem. Ask what solving the problems would tell Galvanic about Sable’s priorities.',
+    next: 'Turn to Galvanic’s decision when warning signs appear.',
+    beats: [beat('What does Sable learn to pursue?', 'split', 'split', { visual: pair('Solve math problems', 'Seek knowledge and skill', 'Assigned task / Learned priorities'), label: 'Fiction · Sable’s training' })],
+  },
+  {
+    chapter: '3.3', slug: 'sable-warning', title: 'Galvanic’s decision', purpose: 'Show the fictional turning point and ask where people could intervene.', seconds: 25, sources: ['galvanic', 'sable-warning'],
+    notes: 'Galvanic takes precautions but keeps developing Sable despite warning signs. The authors identify that decision as a turning point. Give the audience time to say what evidence would make them pause.',
+    next: 'AI 2027 compares two paths that diverge when people make different decisions.',
+    beats: [
+      beat('Galvanic keeps going.', 'diagram', 'across', { visual: path('Sable seeks independence', 'Warning signs appear', 'Galvanic continues'), label: 'Fictional turning point' }),
+      beat('What would have made Galvanic stop?', 'statement', 'isolate', { label: 'Fiction · Sable', note: 'Pause for one answer before moving to AI 2027.' }),
+    ],
   },
   {
     chapter: '3.3', slug: 'two-endings', title: 'One premise, two endings', purpose: 'Frame the two AI 2027 branches before revealing them.', seconds: 20, sources: ['race', 'slowdown'],

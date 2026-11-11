@@ -21,15 +21,17 @@
   margin: 0 0 .55em;
   font: 400 clamp(1.7rem, 2.8vw, 3.3rem)/1.08 var(--serif);
 }
-.report-panel h2 span {
-  margin-inline-start: .45em;
-  color: var(--signal);
-  font: 500 clamp(.65rem, 1vw, 1rem)/1.45 var(--mono);
-  text-transform: uppercase;
-}
 .report-records { display: grid; gap: 7px; list-style: none; padding: 0; margin: 0 0 .85rem; }
 .report-panel + .report-panel .report-records { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.report-records li { display: grid; gap: .3em; padding: .65em .8em; background: var(--bg); border: 1px solid var(--rule); }
+.report-records li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: .3em;
+  padding: .65em .8em;
+  background: var(--bg);
+  border: 1px solid var(--rule);
+  overflow-wrap: anywhere;
+}
 .report-records li span { color: var(--muted); font-size: .85em; }
 .report-records li strong { font-size: clamp(.9rem, 1.45vw, 1.45rem); }
 .report-panel p { color: var(--muted); line-height: 1.45; }
@@ -54,9 +56,12 @@
   padding: 0;
   list-style: none;
 }
+.transport-map { grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr) minmax(0, 1fr); }
 .map-node {
   position: relative;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
   min-height: 64px;
   place-items: center;
   padding: .55em;
@@ -65,6 +70,7 @@
   box-shadow: 0 7px 16px #0008;
   font: 400 clamp(1rem, 2vw, 2.45rem)/1.12 var(--serif);
   text-wrap: balance;
+  overflow-wrap: anywhere;
 }
 .map-hub { border-color: var(--accent); animation: signal-in 570ms var(--ease) both; }
 .transport-map > .map-node::after, .agent-loop > li:not(:last-child)::after {
@@ -144,6 +150,15 @@
 
 @media (max-width: 670px) {
   .report-panels { grid-template-columns: minmax(0, 1fr); }
+  .transport-map { grid-template-columns: minmax(0, 1fr); gap: 22px; max-width: 380px; margin-inline: auto; }
+  .transport-map > .map-node::after {
+    content: '↓';
+    inset: calc(100% + 4px) auto auto 50%;
+    transform: translateX(-50%);
+    font-size: 1rem;
+  }
+  .transport-map .map-branches { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 9px 0 0; }
+  .transport-map .map-branches::before { inset: 0 25% auto; width: auto; height: 9px; border: 1px solid var(--accent); border-bottom: 0; }
   .quiz-feedback { align-items: flex-start; flex-direction: column; }
   .quiz-progress progress { min-width: 75px; }
 }

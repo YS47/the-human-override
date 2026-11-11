@@ -113,6 +113,16 @@ export const evidence = {
     url: 'https://ifanyonebuildsit.com/ii/why-does-sable-end-up-thinking-the-way-it-does',
     scope: 'The authors discuss Sable as a thought experiment about goals and the incentives of a hypothetical advanced AI.',
   },
+  galvanic: {
+    title: 'Why is Galvanic depicted as being fairly careful?', publisher: 'Eliezer Yudkowsky and Nate Soares', date: '2025', kind: 'Fiction · author commentary',
+    url: 'https://ifanyonebuildsit.com/ii/why-is-galvanic-depicted-as-being-fairly-careful',
+    scope: 'The authors describe Galvanic as Sable’s creator and explain why they wrote the lab as taking precautions.',
+  },
+  'sable-warning': {
+    title: 'Why is Galvanic depicted as being insufficiently careful?', publisher: 'Eliezer Yudkowsky and Nate Soares', date: '2025', kind: 'Fiction · author commentary',
+    url: 'https://ifanyonebuildsit.com/ii/why-is-galvanic-depicted-as-being-insufficiently-careful',
+    scope: 'The authors identify Galvanic’s decision to keep developing Sable despite warning signs as a turning point in the story.',
+  },
   race: {
     title: 'AI 2027: Race', publisher: 'AI Futures Project', date: 'April 2025', kind: 'Speculative scenario',
     url: 'https://ai-2027.com/race', scope: 'One of two published endings. Competitive pressure drives the decision to keep advancing capabilities.',
