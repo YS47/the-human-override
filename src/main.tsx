@@ -11,8 +11,9 @@ import { clips, mediaImage } from './media'
 import { momentIndex, timeline, type Beat, type Transition } from './scenes'
 import './style.css'
 
-const animationTime: Record<Transition, number> = {
-  cut: 0, dip: 820, zoom: 720, across: 560, wipe: 570, match: 520, isolate: 630, replace: 450, split: 620, reset: 1000, aperture: 680,
+const animationTime: Record<Transition | 'shutter', number> = {
+  cut: 0, dip: 820, zoom: 780, across: 600, wipe: 670, match: 560, isolate: 630, replace: 480, split: 640, reset: 1000, aperture: 720,
+  shutter: 880,
 }
 const inputInterval = 230
 const lastBeat = timeline.length - 1
@@ -90,9 +91,13 @@ function App() {
       return
     }
     const incoming = timeline[next]
+    const outgoing = timeline[current.current]
     const direction = next < current.current ? 'back' : 'forward'
+    const crossesPhase = incoming.chapter.phase !== outgoing.chapter.phase &&
+      incoming.chapter.phase !== 'humanity' && outgoing.chapter.phase !== 'humanity'
+    const effect = crossesPhase ? 'shutter' : incoming.beat.motion
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
-    const duration = reduced ? 0 : animationTime[incoming.beat.motion]
+    const duration = reduced ? 0 : animationTime[effect]
     const animate = duration > 0 && Boolean(document.startViewTransition) && !panel && !blackout
     const token = ++generation.current
     current.current = next
@@ -111,7 +116,7 @@ function App() {
 
     if (animate) {
       const root = document.documentElement
-      root.dataset.transition = incoming.beat.motion
+      root.dataset.transition = effect
       root.dataset.direction = direction
       root.style.setProperty('--duration', duration + 'ms')
       const transition = document.startViewTransition(() => flushSync(commit))

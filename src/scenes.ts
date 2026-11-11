@@ -22,7 +22,7 @@ export const chapters = [
 ] as const
 
 export type Transition = 'cut' | 'dip' | 'zoom' | 'across' | 'wipe' | 'match' | 'isolate' | 'replace' | 'split' | 'reset' | 'aperture'
-export type Composition = 'statement' | 'aside' | 'reverse' | 'frame' | 'diagram' | 'archive' | 'number' | 'split' | 'screening'
+export type Composition = 'statement' | 'aside' | 'reverse' | 'frame' | 'diagram' | 'archive' | 'number' | 'split' | 'screening' | 'quiz'
 export type Visual =
   | { kind: 'image'; id: MediaId; detail?: boolean }
   | { kind: 'source'; id: EvidenceId }
@@ -36,6 +36,11 @@ export type Visual =
   | { kind: 'fusion'; merged: boolean }
   | { kind: 'interview' }
   | { kind: 'clip'; id: ClipId }
+  | { kind: 'reports' }
+  | { kind: 'transport' }
+  | { kind: 'alerts'; resolved: boolean }
+  | { kind: 'agent-loop' }
+  | { kind: 'quiz' }
 
 export type Beat = {
   title: string
@@ -110,6 +115,7 @@ const control: Scene[] = [
     beats: [
       beat('Fix', 'aside', 'across', { visual: image('chain-fix'), text: 'What does the evidence establish?' }),
       beat('The records can disagree.', 'statement', 'replace', { text: 'Both teams need to account for what remains uncertain.' }),
+      beat('What happens when the records conflict?', 'diagram', 'split', { visual: { kind: 'reports' }, note: 'Ask what evidence each team should check before accepting either reading.' }),
     ],
   },
   {
@@ -161,7 +167,7 @@ const control: Scene[] = [
     chapter: '1.2', title: 'Transport', purpose: 'Explain how records reach another device.', seconds: 42, sources: ['army'], extras: ['communications'],
     notes: 'Transport is the communications layer. The generic link diagram illustrates the concept. The inspector includes a separate Freedom Shield photo for context.',
     next: 'A link carries records. The data layer has to make sense of them.',
-    beats: [beat('Transport carries the update.', 'diagram', 'across', { visual: path('Field device', 'Communications link', 'Shared system') })],
+    beats: [beat('Transport carries the update.', 'diagram', 'across', { visual: { kind: 'transport' } })],
   },
   {
     chapter: '1.2', title: 'Data and sensor fusion', purpose: 'Show how independent observations change an estimate.', seconds: 55, sources: ['army', 'fusion'],
@@ -284,8 +290,8 @@ const danger: Scene[] = [
     notes: 'These are hypothetical counts. With 10 real positives among 1,000 objects, the detector catches nine and falsely flags 50 other objects. It misses one real positive. Recall is 9 of 10. Precision is 9 of 59, about 15%. Ask for guesses before showing the precision.',
     next: 'Imagine seeing the alert without those counts.',
     beats: [
-      beat('How many alerts would you trust?', 'number', 'cut', { visual: stat('59', 'alerts among 1,000 objects'), label: 'Hypothetical classroom example' }),
-      beat('Nine alerts were correct.', 'number', 'isolate', { visual: stat('50', 'alerts were false positives'), label: 'Hypothetical classroom example' }),
+      beat('How many alerts would you trust?', 'number', 'cut', { visual: { kind: 'alerts', resolved: false }, label: 'Hypothetical classroom example' }),
+      beat('Nine alerts were correct.', 'number', 'match', { visual: { kind: 'alerts', resolved: true }, label: 'Hypothetical classroom example' }),
       beat('Precision is the share of alerts that were right.', 'number', 'replace', { visual: stat('≈15%', '9 correct alerts out of 59'), text: 'The detector found 9 of the 10 real positives.' }),
     ],
   },
@@ -391,7 +397,7 @@ const dread: Scene[] = [
     next: 'A score can encourage actions that miss the intended goal.',
     beats: [
       beat('A model produces text.', 'diagram', 'across', { visual: path('Input', 'Language model', 'Text') }),
-      beat('An agent can act through tools.', 'diagram', 'match', { visual: path('Model', 'Permitted tool', 'Result feeds back') }),
+      beat('An agent can act through tools.', 'diagram', 'match', { visual: { kind: 'agent-loop' } }),
     ],
   },
   {
@@ -445,12 +451,18 @@ const dread: Scene[] = [
   {
     chapter: '3.3', title: 'Safeguards people can use', purpose: 'Give scope, audit and intervention separate reveals.', seconds: 70, sources: ['openai', 'metr', 'dod'],
     notes: 'Test before release. Scope permissions and isolate risky tools. Keep records available to reviewers. Assign someone with the time, evidence and authority to stop a system. Ask who would act if there were a problem.',
-    next: 'Close the technical discussion with the supervision question.',
+    next: 'Review the main ideas with the audience, then close with the supervision question.',
     beats: [
       beat('Scope what the system can do.', 'diagram', 'across', { visual: path('Task', 'Limited permissions', 'Isolated tools') }),
       beat('Keep decisions reviewable.', 'diagram', 'wipe', { visual: path('Inputs', 'Recommendations', 'Decisions and interventions') }),
       beat('Give someone the authority to stop it.', 'statement', 'isolate', { text: 'Give that person the evidence and time to act.' }),
     ],
+  },
+  {
+    chapter: '3.3', slug: 'quiz', title: 'Knowledge check', purpose: 'Review the ten concepts the audience has just seen.', seconds: 0, sources: ['army', 'fusion', 'yolo', 'bias', 'lavender', 'idf', 'robot', 'anthropic', 'metr'],
+    notes: 'Use this optional review when time allows. Let the audience choose an answer, then read the feedback before moving to the next question. You can advance the deck at any point.',
+    next: 'Close the technical discussion with the supervision question.',
+    beats: [beat('Knowledge check', 'quiz', 'wipe', { visual: { kind: 'quiz' } })],
   },
   {
     chapter: '3.3', title: 'The human override', purpose: 'Leave the room with the test of meaningful supervision.', seconds: 61, sources: ['anthropic', 'metr', 'dod'],

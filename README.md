@@ -1,6 +1,6 @@
 # The Human Override
 
-A 39:54 university presentation on AI-assisted command, autonomous weapons, research on unsafe agent behavior, and human responsibility. It has 48 scenes across three phases and a final reflection, with 86 manually advanced visual beats. Optional audience discussion questions are available in the final speaker notes.
+A 39:54 university presentation on AI-assisted command, autonomous weapons, research on unsafe agent behavior, and human responsibility. It has 49 scenes across three phases and a final reflection, with 88 manually advanced visual beats. A ten-question review slide and final discussion prompts are optional.
 
 [Open the presentation](https://ys47.github.io/the-human-override/)
 

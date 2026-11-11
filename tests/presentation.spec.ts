@@ -49,12 +49,37 @@ test('filters rapid clicks and held keys and permits a deliberate reversal', asy
   await at(page, 1, 1)
 })
 
+test('phase shutters and progressive chart motion follow the presenter and respect reduced motion', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await page.goto('./#scene-16.2')
+  await expect(stage(page)).toBeFocused()
+  await page.keyboard.press('ArrowRight')
+  await expect(page.locator('html')).toHaveAttribute('data-transition', 'shutter')
+  await expect.poll(() => page.evaluate(() => document.getAnimations().some(animation =>
+    animation instanceof CSSAnimation && animation.animationName === 'shutter-open'))).toBe(true)
+  await at(page, 18, 1)
+  await expect(stage(page).getByRole('heading')).toHaveText('What if the target is no longer a vehicle, but a person?')
+
+  await page.goto('./#scene-31.1')
+  await page.reload()
+  const meters = stage(page).locator('meter')
+  await expect(meters).toHaveCount(1)
+  await meters.first().evaluate(meter => { meter.dataset.present = 'yes' })
+  await page.keyboard.press('ArrowRight')
+  await expect(meters).toHaveCount(2)
+  await expect(meters.first()).toHaveAttribute('data-present', 'yes')
+  await expect(meters.last()).toHaveCSS('animation-name', 'meter-sweep')
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await expect(meters.last()).toHaveCSS('animation-name', 'none')
+  await at(page, 34, 2)
+})
+
 test('navigator jumps to any scene and the chapter rail returns to earlier chapters', async ({ page }) => {
   await page.goto('./')
   await expect(stage(page)).toBeFocused()
   await page.keyboard.press('g')
   const dialog = page.getByRole('dialog', { name: 'Scene navigator' })
-  await expect(dialog.getByRole('button')).toHaveCount(49)
+  await expect(dialog.getByRole('button')).toHaveCount(50)
   await dialog.getByRole('button', { name: /23 The Lavender investigation/ }).click()
   await at(page, 23, 1)
   await page.getByRole('navigation', { name: 'Chapters' }).getByRole('button', { name: 'Two armies, one battlefield' }).click()
@@ -72,7 +97,7 @@ test('deep links restore individual beats and legacy aliases', async ({ page }) 
   await at(page, 3, 1)
   await expect(stage(page).getByRole('heading')).toHaveText('Find')
   await page.goto('./#scene-reflection')
-  await at(page, 48, 1)
+  await at(page, 49, 1)
   await expect(page.getByRole('button', { name: 'Next beat' })).toBeDisabled()
 })
 
@@ -208,6 +233,49 @@ test('a missing reel shows the credited frame and the presenter can advance', as
   await at(page, 32, 1)
 })
 
+test('the conflict comparison and explanatory charts preserve their labels and counts', async ({ page }) => {
+  await page.goto('./#scene-04.2')
+  await at(page, 4, 2)
+  await next(page)
+  await at(page, 4, 3)
+  await expect(stage(page).getByRole('heading', { level: 1 })).toHaveText('What happens when the records conflict?')
+  for (const name of ['Base B human review', 'Base A interface']) {
+    const panel = stage(page).getByRole('region', { name })
+    await expect(panel.getByRole('listitem')).toHaveCount(2)
+    await expect(panel.getByText('Wind from north')).toBeVisible()
+    await expect(panel.getByText('Wind from south')).toBeVisible()
+  }
+  await page.goto('./#scene-25.1')
+  await expect(stage(page).locator('.alert-grid span')).toHaveCount(59)
+  await next(page)
+  await expect(stage(page).locator('.alert-grid .confirmed')).toHaveCount(9)
+  await expect(stage(page).locator('.alert-grid .false-positive')).toHaveCount(50)
+  await page.goto('./#scene-35.2')
+  await expect(stage(page).getByText('Result returns to the model')).toBeVisible()
+})
+
+test('the ten questions give feedback and a score on one slide', async ({ page }) => {
+  await page.goto('./#scene-quiz.1')
+  const quiz = stage(page).getByRole('region', { name: 'Ten-question review' })
+  await expect(quiz.getByText('Question 1 of 10')).toBeVisible()
+  await quiz.getByRole('heading').click()
+  await at(page, 47, 1)
+  await expect(quiz.getByRole('button', { name: 'Next question' })).toBeDisabled()
+  const choices = [0, 0, 2, 1, 0, 2, 0, 1, 2, 1]
+  for (const [index, choice] of choices.entries()) {
+    await expect(quiz.getByText(`Question ${index + 1} of 10`)).toBeVisible()
+    await quiz.locator('.quiz-options button').nth(choice).click()
+    await expect(quiz.getByRole('status')).toContainText(index ? 'Correct.' : 'Incorrect.')
+    await quiz.getByRole('button', { name: index === choices.length - 1 ? 'See score' : 'Next question' }).click()
+  }
+  await expect(quiz.getByRole('heading')).toHaveText('You got 9 out of 10 correct.')
+  await at(page, 47, 1)
+  await quiz.getByRole('button', { name: 'Start again' }).click()
+  await expect(quiz.getByText('Question 1 of 10')).toBeVisible()
+  await next(page)
+  await at(page, 48, 1)
+})
+
 test('the complete sequence fits a 16:9 projector and the phase colors are solid', async ({ page }) => {
   await page.setViewportSize({ width: 1920, height: 1080 })
   await page.goto('./')
@@ -225,7 +293,7 @@ test('the complete sequence fits a 16:9 projector and the phase colors are solid
 
 test('assets resolve under the Pages base path on a narrow viewport', async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 800 })
-  for (const link of ['01.2', '10.1', 'what-the-display-leaves-out.1', '20.3', '22.1', '29.1', 'camera-comparison.1', '42.1']) {
+  for (const link of ['01.2', '04.3', '10.1', 'what-the-display-leaves-out.1', '20.3', '22.1', '29.1', 'camera-comparison.1', 'quiz.1', '42.1']) {
     const hash = '#scene-' + link
     await page.goto('./' + hash)
     const moment = timeline.find(entry => entry.hash === hash)!

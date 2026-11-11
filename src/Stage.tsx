@@ -1,8 +1,11 @@
 import { Fragment, useEffect, useRef, useState } from 'react'
+import { AgentLoop, AlertGrid, ReportComparison, TransportMap } from './Diagrams'
 import { evidence } from './evidence'
 import { clips, mediaDetails, mediaImage, mediaPath, type ClipId, type MediaId } from './media'
 import { Interview } from './Presenter'
+import { Quiz } from './Quiz'
 import type { Moment, Visual } from './scenes'
+import './visualizations.css'
 
 export function Photograph({ id, detail = false }: { id: MediaId; detail?: boolean }) {
   const [failed, setFailed] = useState(false)
@@ -165,14 +168,26 @@ function VisualContent({ visual, muted, covered }: { visual: Visual; muted: bool
       return <Interview key={String(muted)} />
     case 'clip':
       return <LabClip id={visual.id} muted={muted} covered={covered} />
+    case 'reports':
+      return <ReportComparison />
+    case 'transport':
+      return <TransportMap />
+    case 'alerts':
+      return <AlertGrid resolved={visual.resolved} />
+    case 'agent-loop':
+      return <AgentLoop />
+    case 'quiz':
+      return <Quiz />
     case 'stat':
       return <figure className="stat"><strong>{visual.value}</strong><figcaption>{visual.label}</figcaption></figure>
     case 'results':
       return (
         <figure className="result-figure">
           <ol className="results">{results.slice(0, visual.count).map(row => <li key={row.label}>
-            <div><span>{row.label}</span><strong>{row.value} / 300</strong></div>
-            <meter min={0} max={300} value={row.value} aria-label={row.label + ' unsafe-task attempts'} />
+            <div className="result-labels"><span>{row.label}</span><strong>{row.value} / 300</strong></div>
+            <div className="result-track">
+              <meter min={0} max={300} value={row.value} aria-label={row.label + ' unsafe-task attempts'} />
+            </div>
           </li>)}</ol>
           <figcaption><a href={evidence.robot.url} target="_blank" rel="noreferrer">Robocurve study · redrawn from reported counts ↗</a></figcaption>
         </figure>
@@ -182,14 +197,18 @@ function VisualContent({ visual, muted, covered }: { visual: Visual; muted: bool
 
 export function Stage({ moment, advance, muted, covered }: { moment: Moment; advance: () => void; muted: boolean; covered: boolean }) {
   const { beat, chapter } = moment
+  const visual = beat.visual
   const reflectionComma = chapter.phase === 'humanity' ? beat.title.indexOf(',') + 1 : 0
+  // Keep comparison footage and chart rows mounted when the next beat builds on them.
+  const visualKey = visual?.kind === 'image' || visual?.kind === 'clip' ? visual.id :
+    visual?.kind === 'path' || visual?.kind === 'pair' || visual?.kind === 'stat' ? moment.hash : visual?.kind
   return (
     <main id="presentation-stage" className={'stage layout-' + beat.layout + (beat.black ? ' black-stage' : '')}
       tabIndex={-1} aria-label="Presentation stage"
       onClick={event => {
         const element = event.target
         if (event.detail > 1 || !(element instanceof Element) ||
-            element.closest('button, a, input, iframe, video') || window.getSelection()?.toString()) return
+            element.closest('button, a, input, iframe, video, [data-stage-interactive]') || window.getSelection()?.toString()) return
         advance()
       }}>
       <div className="stage-copy">
@@ -197,9 +216,9 @@ export function Stage({ moment, advance, muted, covered }: { moment: Moment; adv
         <h1>{reflectionComma ? <>{beat.title.slice(0, reflectionComma)} <em>{beat.title.slice(reflectionComma).trim()}</em></> : beat.title}</h1>
         {beat.text && <p className="support">{beat.text}</p>}
       </div>
-      {beat.visual && <div className="stage-visual" data-visual={beat.visual.kind}>
-        <Fragment key={beat.visual.kind === 'image' || beat.visual.kind === 'clip' ? beat.visual.id : beat.visual.kind}>
-          <VisualContent visual={beat.visual} muted={muted} covered={covered} />
+      {visual && <div className="stage-visual" data-visual={visual.kind}>
+        <Fragment key={visualKey}>
+          <VisualContent visual={visual} muted={muted} covered={covered} />
         </Fragment>
       </div>}
     </main>
