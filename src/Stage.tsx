@@ -30,7 +30,7 @@ function LabClip({ id, muted, covered }: { id: ClipId; muted: boolean; covered: 
     if (covered) player.current?.pause()
   }, [covered])
 
-  return <figure className="lab-clip">
+  return <figure className="lab-clip" data-clip={id}>
     <div className="clip-frame">
       {failed ? <img src={poster} alt={credit.alt} width={clip.width} height={clip.height} /> :
         <video ref={player} controls playsInline muted={muted} preload="metadata"

@@ -208,7 +208,7 @@ export const mediaDetails = (id: MediaId): Media => media[id]
 export const mediaImage = (id: MediaId) => mediaPath(mediaDetails(id).file ?? `${id}.webp`)
 
 export const clips = {
-  bench: { file: 'robocurve-bench.mp4', poster: 'bench-poster', title: 'Robocurve laboratory footage', duration: '4-second excerpt', width: 480, height: 394 },
+  bench: { file: 'robocurve-bench.mp4', poster: 'bench-poster', title: 'Robocurve laboratory footage', duration: '4-second excerpt', width: 240, height: 394 },
   comparison: { file: 'robocurve-comparison.mp4', poster: 'comparison-poster', title: 'Robocurve camera comparison', duration: '5-second excerpt', width: 440, height: 310 },
 } as const satisfies Record<string, { file: string; poster: MediaId; title: string; duration: string; width: number; height: number }>
 

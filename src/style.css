@@ -163,6 +163,7 @@ figcaption a:hover { text-decoration: underline; }
 }
 .experiment { width: min(100%, 85svh); margin-inline: auto; background: var(--surface); }
 .lab-clip { background: var(--surface); }
+.lab-clip[data-clip='bench'] { width: min(100%, 39svh); margin-inline: auto; }
 .clip-frame {
   position: relative;
   border-inline: clamp(5px, 1vw, 16px) solid var(--surface);

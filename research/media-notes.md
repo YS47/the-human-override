@@ -46,7 +46,7 @@ See [the application manifest](../src/media.ts) for source URLs, original credit
 | Scene link ID | Asset selection | Attribution |
 | --- | --- | --- |
 | `what-the-display-leaves-out` | Frame 259 | Johnny Harris, *This Is How AI Is Rewriting the Rules of War* |
-| `bench-test` | First four seconds of `1794403854952_evolving.ai_reel_20261107151421.mov` | Robocurve footage, Evolving AI edit |
+| `bench-test` | Right-hand physical camera view from the first four seconds of `1794403854952_evolving.ai_reel_20261107151421.mov` | Robocurve footage, Evolving AI edit |
 | `camera-comparison` | First five seconds of `1794403872693_evolving.ai_reel_20261107151421.mp4` | Robocurve figures and footage, Evolving AI edit |
 | `reading-the-simulation` | One sentence cropped from frame 215 | Anthropic study reproduced by Species \\| Documenting AGI |
 | `sable-assumption` | Frame 3144 | Species \\| Documenting AGI commentary on the fictional Sable story |
