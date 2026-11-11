@@ -204,7 +204,7 @@ function App() {
   function goTo(next: number) {
     const destination = Math.min(last, Math.max(0, next))
     setOverlay(null)
-    if (destination === index) return
+    if (destination === indexFromHash()) return
     location.hash = `scene-${scenes[destination].id}`
   }
 
@@ -227,11 +227,11 @@ function App() {
       }
       if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(event.key)) {
         event.preventDefault()
-        goTo(index + 1)
+        goTo(indexFromHash() + 1)
       }
       if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(event.key)) {
         event.preventDefault()
-        goTo(index - 1)
+        goTo(indexFromHash() - 1)
       }
       if (event.key.toLowerCase() === 'n') setOverlay('notes')
       if (event.key.toLowerCase() === 'f') void toggleFullscreen()
@@ -275,8 +275,8 @@ function App() {
         </div>
         <div className="footer-controls">
           <p className="scene-count" aria-live="polite"><strong>{twoDigits(index + 1)}</strong><span> / {twoDigits(scenes.length)}</span></p>
-          <button className="button arrow" aria-label="Previous scene" disabled={index === 0} onClick={() => goTo(index - 1)}><Icon name="left" /></button>
-          <button className="button next" aria-label="Next scene" disabled={index === last} onClick={() => goTo(index + 1)}><span>Next scene</span><Icon name="right" /></button>
+          <button className="button arrow" aria-label="Previous scene" disabled={index === 0} onClick={() => goTo(indexFromHash() - 1)}><Icon name="left" /></button>
+          <button className="button next" aria-label="Next scene" disabled={index === last} onClick={() => goTo(indexFromHash() + 1)}><span>Next scene</span><Icon name="right" /></button>
         </div>
       </footer>
 

@@ -21,6 +21,18 @@ test('moves forward and backward with a presenter remote and chapter links', asy
   await expect(page.getByRole('button', { name: 'Next scene', exact: true })).toBeDisabled()
 })
 
+test('keeps up with successive remote presses before a hash change event', async ({ page }) => {
+  await page.goto('./#scene-1.2')
+  await expect(page.getByRole('heading', heading(/connected/i))).toBeVisible()
+  await page.evaluate(() => {
+    for (const key of ['ArrowRight', 'ArrowRight', 'ArrowLeft']) {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }))
+    }
+  })
+  await expect(page).toHaveURL(/#scene-1.3$/)
+  await expect(page.getByRole('heading', heading(/becomes a weakness/i))).toBeVisible()
+})
+
 test('opens evidence and presenter tools and leaves the final screen intact during Q&A', async ({ page }) => {
   await page.goto('./#scene-2.2')
   await page.getByRole('button', { name: 'Evidence', exact: true }).click()
