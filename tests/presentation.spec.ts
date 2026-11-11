@@ -261,9 +261,12 @@ test('the ten questions give feedback and a score on one slide', async ({ page }
   await quiz.getByRole('heading').click()
   await at(page, 47, 1)
   await expect(quiz.getByRole('button', { name: 'Next question' })).toBeDisabled()
-  const choices = [0, 0, 2, 1, 0, 2, 0, 1, 2, 1]
+  const choices = [0, 0, 2, 1, 0, 2, 1, 1, 2, 1]
   for (const [index, choice] of choices.entries()) {
     await expect(quiz.getByText(`Question ${index + 1} of 10`)).toBeVisible()
+    if (index === 6) {
+      await expect(quiz.getByRole('heading')).toHaveText('Which finding from the Lavender investigation is confirmed in the public record?')
+    }
     await quiz.locator('.quiz-options button').nth(choice).click()
     await expect(quiz.getByRole('status')).toContainText(index ? 'Correct.' : 'Incorrect.')
     await quiz.getByRole('button', { name: index === choices.length - 1 ? 'See score' : 'Next question' }).click()

@@ -38,10 +38,10 @@ const questions = [
     feedback: 'Automation bias occurs when people give an automated recommendation too much weight.',
   },
   {
-    prompt: 'How should you present the disputed Lavender claims?',
-    options: ['Attribute the reporting and give the IDF response', 'Describe the reporting as a confirmed finding', 'Treat a commentator’s summary as the original source'],
-    correct: 0,
-    feedback: 'The investigation and the official response are distinct accounts. Attribute each to its source.',
+    prompt: 'Which finding from the Lavender investigation is confirmed in the public record?',
+    options: ['The exact accuracy of Lavender’s scores', 'The Israeli military used Lavender for intelligence analysis', 'The exact role Lavender played in each strike'],
+    correct: 1,
+    feedback: '+972 Magazine and Local Call reported that Lavender existed and was used. The Israeli military later acknowledged both in a public statement.',
   },
   {
     prompt: 'What changed between the two views in the Robocurve clip?',
