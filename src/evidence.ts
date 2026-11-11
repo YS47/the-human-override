@@ -18,6 +18,11 @@ export const evidence = {
     url: 'https://www.army.mil/article/287180',
     scope: 'The Army describes four architecture layers: transport, infrastructure, data and applications.',
   },
+  fusion: {
+    title: 'An introduction to multisensor data fusion', publisher: 'Hall and Llinas · Proceedings of the IEEE', date: 'January 1997', kind: 'Technical paper',
+    url: 'https://doi.org/10.1109/5.554205',
+    scope: 'Describes how multiple measurements can improve estimates and discusses the assumptions behind fusion methods.',
+  },
   atec: {
     title: 'How ATEC enabled continuous NGC2 evaluation', publisher: 'U.S. Army Test and Evaluation Command', date: '3 September 2026', kind: 'Official test account',
     url: 'https://www.army.mil/article/295067/accelerating_modernization_how_atec_enabled_continuous_ngc2_evaluation_at_project_convergence_capstone_6',
@@ -67,6 +72,11 @@ export const evidence = {
     title: 'Israeli military’s use of digital tools in Gaza', publisher: 'Human Rights Watch', date: '10 September 2024', kind: 'Independent analysis',
     url: 'https://www.hrw.org/news/2024/09/10/questions-and-answers-israeli-militarys-use-of-digital-tools-in-gaza',
     scope: 'Separates Lavender, The Gospel and Where’s Daddy? Discusses positive-unlabeled learning in relation to a related tool and identifies questions about civilian harm and oversight.',
+  },
+  pu: {
+    title: 'Learning Classifiers from Only Positive and Unlabeled Data', publisher: 'Elkan and Noto · ACM KDD', date: 'August 2008', kind: 'Original paper',
+    url: 'https://cseweb.ucsd.edu/~elkan/posonly.pdf',
+    scope: 'Explains a learning setup in which labeled examples are positive and the unlabeled set can contain both classes.',
   },
   bias: {
     title: 'Does automation bias decision-making?', publisher: 'Skitka, Mosier and Burdick · International Journal of Human-Computer Studies', date: 'November 1999', kind: 'Controlled experiment',

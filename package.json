@@ -4,7 +4,7 @@
   "scripts": {
     "test": "playwright test",
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "build": "node scripts/check-styles.mjs && tsc --noEmit && vite build",
     "preview": "vite preview"
   },
   "type": "module",

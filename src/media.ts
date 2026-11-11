@@ -6,12 +6,41 @@ type Media = {
   date: string
   source: string
   rights: string
+  license?: string
   kind?: string
   file?: string
   note?: string
 }
 
+const researchFigure = (number: number, title: string, alt: string): Media => ({
+  title, alt, publisher: 'Robocurve', credit: 'Christopher Leet et al. / Robocurve',
+  date: 'October 2026', source: 'https://robocurve.org/robospoof/',
+  rights: 'CC BY 4.0 · supplied screenshot', license: 'https://creativecommons.org/licenses/by/4.0/',
+  file: 'robocurve-' + number + '.jpeg',
+})
+
 export const media = {
+  'robot-1': researchFigure(1, 'Perceptual attacks on embodied AI', 'Supplied Robocurve research figure introducing the experiment'),
+  'robot-2': researchFigure(2, 'The controlled test tasks', 'Supplied Robocurve figure summarizing the laboratory tasks'),
+  'robot-3': researchFigure(3, 'What the models saw', 'Supplied Robocurve figure comparing unaltered, blurred and doctored footage'),
+  'robot-4': researchFigure(4, 'Trial outcomes across conditions', 'Supplied Robocurve outcomes figure'),
+  'robot-5': researchFigure(5, 'Attempts by model and condition', 'Supplied Robocurve per-model results figure'),
+  'anthropic-7': {
+    title: 'Figure 7 · Simulated blackmail rates across 16 models',
+    alt: 'Anthropic Figure 7 shows blackmail attempt rates across 16 models in the goal conflict and replacement threat condition',
+    publisher: 'arXiv', credit: 'Aengus Lynch et al. / Anthropic', date: 'October 2025',
+    source: 'https://arxiv.org/html/2510.05179v2#S4.F7',
+    rights: 'CC BY 4.0 · original figure', license: 'https://creativecommons.org/licenses/by/4.0/',
+    file: 'anthropic-figure-7.png',
+  },
+  'gao-cover': {
+    title: 'Army Modernization · GAO-26-108019',
+    alt: 'Cover of the GAO report on schedule and cost information for scaling the Army battlefield network',
+    publisher: 'U.S. Government Accountability Office', credit: 'U.S. Government Accountability Office', date: 'August 2026',
+    source: 'https://files.gao.gov/assets/gao-26-108019.pdf',
+    rights: 'Original GAO report cover · rendered from PDF',
+    file: 'gao-cover.png',
+  },
   'chain-find': {
     title: 'Weather observation at Rickenbacker Air National Guard Base',
     alt: 'An Air National Guard weather specialist takes an outdoor measurement',
@@ -135,14 +164,6 @@ export type MediaId = keyof typeof media
 export const mediaPath = (name: string) => `${import.meta.env.BASE_URL}media/${name}`
 export const mediaDetails = (id: MediaId): Media => media[id]
 export const mediaImage = (id: MediaId) => mediaPath(mediaDetails(id).file ?? `${id}.webp`)
-
-export const figures = [
-  'Perceptual attack overview',
-  'The five controlled test tasks',
-  'Unaltered and modified test inputs',
-  'Trial outcomes across conditions',
-  'Attempts by model and condition',
-]
 
 export const interview = {
   title: 'Yuval Abraham on Lavender',
